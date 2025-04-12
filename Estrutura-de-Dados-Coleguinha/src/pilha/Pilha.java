@@ -83,7 +83,9 @@ public interface Pilha {
             }
 
             while (!temp.isEmpty()) {
-                push(temp.pop());
+                Object o = temp.pop();
+                push(o);
+                p.push(o);
             }
         }
     }

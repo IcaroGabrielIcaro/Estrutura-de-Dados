@@ -1,19 +1,34 @@
 package pilha;
-import pilha.Pilha.PilhaArray;
 
 public class testePilha {
 	public static void main(String[] args) {
-		PilhaArray p = new PilhaArray(1, 0);
-		PilhaArray p2 = new PilhaArray(1, 0);
+		PilhaFlamengo pilha = new PilhaFlamengo(3);
+		pilha.pushVermelho(1);
+		// System.out.println(pilha.capacidade);
+		
+		pilha.pushVermelho(2);
+		// System.out.println(pilha.capacidade);
+		
+		// pilha.pushVermelho(3);
+		// System.out.println(pilha.capacidade);
+		
+		// pilha.pushVermelho(4);
+		// System.out.println(pilha.capacidade);
+		System.out.println(pilha.capacidade);
 
-		p.push(0);
-		System.out.println(p.size());
+		System.out.println(pilha.popVermelho());
+		System.out.println(pilha.capacidade);
+		System.out.println(pilha.topVermelho());
 
-		for (int i = 1; i < 1000000; i++) {
-			p2.push(i);
-		}
+		// System.out.println(pilha.topVermelho());
+		// System.out.println(pilha.topPreto());
 
-		p.adicionaPilha(p2);
-		System.out.println(p.size());
+		// System.out.println(pilha.sizePreto());
+		// System.out.println(pilha.sizeVermelho());
+
+		// System.out.println(pilha.popVermelho());
+		// System.out.println(pilha.popPreto());
+
+
 	}
 }

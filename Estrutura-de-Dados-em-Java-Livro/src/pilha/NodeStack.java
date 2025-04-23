@@ -16,8 +16,8 @@ public class NodeStack <E> implements Stack<E> {
     }
 
     public void push(E elem) {
-        Node<E> v = new Node<E>(elem, top);
-        top = v;
+        Node<E> v = new Node<E>(elem, top); // cria um novo elemento no inicio da lista
+        top = v; // agora o novo primeiro elemento é o elemento criado
         size++;
     }
 
@@ -32,8 +32,8 @@ public class NodeStack <E> implements Stack<E> {
         if (isEmpty()) {
             throw new EmptyStackException("Stack is empty.");
         }
-        E elem = top.getElement();
-        top = top.getNext();
+        E elem = top.getElement(); // pega o primeiro elemento da lista
+        top = top.getNext(); // o novo primeiro elemento é o proximo do elemento atual (o elemeento atual fica sem referencia para si)
         size--;
         return elem;
     }

@@ -1,3 +1,4 @@
+package introducao;
 public class Intro {
     public static void main(String[] args) {
         int[] vetorzao = new int[10];

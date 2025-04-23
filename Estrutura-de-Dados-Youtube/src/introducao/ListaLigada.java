@@ -1,3 +1,4 @@
+package introducao;
 public class ListaLigada {
     private Elemento primeiro;
     private Elemento ultimo;

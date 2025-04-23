@@ -1,3 +1,4 @@
+package introducao;
 public class Counter {
     protected int count; // uma simples variavel de instancia inteira
     

@@ -1,3 +1,4 @@
+package introducao;
 public class Universe { 
     /* public -> isto diz que todo mundo pode executar este programa
     class -> todo codigo java deve pertencer a uma classe

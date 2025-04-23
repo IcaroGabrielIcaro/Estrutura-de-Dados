@@ -1,3 +1,4 @@
+package introducao;
 public class Example { // o nome desta classe
     public static void main(String[] args) { // sintaxe padrao para declaar um metodo
         Counter c;

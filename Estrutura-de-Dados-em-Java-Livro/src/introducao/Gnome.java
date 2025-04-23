@@ -1,3 +1,4 @@
+package introducao;
 public class Gnome {
     // Variaveis de instancia
     public String name;

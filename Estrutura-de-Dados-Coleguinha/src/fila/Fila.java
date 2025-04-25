@@ -6,6 +6,9 @@ public interface Fila {
     public Object first() throws EFilaVazia;
     public void enqueue(Object o);
     public Object dequeue() throws EFilaVazia;
+    public void inverse1();
+    public void inverse2();
+    public void print();
 
     public class EFilaVazia extends RuntimeException {
         public EFilaVazia(String err) { 
@@ -19,7 +22,7 @@ public interface Fila {
         private int fatorCrescimento;
         private int inicioFila;
         private int finalFila;
-
+        
         public FilaArray (int capacidade, int crescimento) {
             this.capacidade = capacidade;
             inicioFila= 0;
@@ -70,6 +73,33 @@ public interface Fila {
 
         public boolean isEmpty() {
             return (inicioFila == finalFila);
+        }
+
+        public void inverse1() {
+            Object b[] = new Object[capacidade];
+            int size = size();
+            int inicio = inicioFila;
+            int finalF = finalFila;
+            for (int i = 0; i < size; i++) {
+                b[(finalFila - i - 1) % capacidade] = dequeue();
+            }
+            array = b;
+            inicioFila = inicio;
+            finalFila = finalF;
+        }
+
+        public void inverse2() {
+            for (int i = 0; i < size() / 2; i++) {
+                Object aux = array[(inicioFila + i) % capacidade];
+                array[(inicioFila + i) % capacidade] = array[(finalFila - i - 1) % capacidade];
+                array[(finalFila - i - 1) % capacidade] = aux;
+            }
+        }
+
+        public void print() {
+            for (int i = 0; i < capacidade; i++) {
+                System.out.println(array[i]);
+            }
         }
     }
 }

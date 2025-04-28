@@ -36,15 +36,18 @@ public interface Fila {
 
         public void enqueue(Object o) {
             if (size() == capacidade - 1) {
+                int novaCapacidade;
                 if (fatorCrescimento == 0) {
-                    capacidade *= 2;
+                    novaCapacidade = capacidade * 2;
                 } else {
-                    capacidade += fatorCrescimento;
+                    novaCapacidade = capacidade + fatorCrescimento;
                 }
-                Object b[] = new Object[capacidade];
-                for (int f = 0; f < array.length; f++) {
-                    b[f] = array[f];
+                Object b[] = new Object[novaCapacidade];
+                for (int index = 0; index < size(); index++) {
+                    b[(inicioFila + (capacidade * (finalFila - inicioFila >>> 31)) + index) % novaCapacidade] = array[(inicioFila + index) % capacidade];
                 }
+                inicioFila = (inicioFila + (capacidade * (finalFila - inicioFila >>> 31))) % capacidade;
+                capacidade = novaCapacidade;
                 array = b;
             }
             array[finalFila] = o;
@@ -56,6 +59,7 @@ public interface Fila {
                 throw new EFilaVazia("A Fila está vazia");
             }
             Object o = array[inicioFila];
+            array[inicioFila] = null;
             inicioFila = (inicioFila + 1) % capacidade;
             return o;
         }

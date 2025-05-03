@@ -1,5 +1,7 @@
 package fila;
 
+import fila.Fila;
+
 public class Programa {
     public static void main(String[] args) {
         Fila fila = new Fila();

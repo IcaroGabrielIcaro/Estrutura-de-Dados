@@ -1,5 +1,7 @@
 package pilha;
 
+import pilha.Pilha;
+
 public class Programa {
     public static void main(String[] args) {
         Pilha pilha = new Pilha();

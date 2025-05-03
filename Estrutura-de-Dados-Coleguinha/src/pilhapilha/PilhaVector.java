@@ -1,4 +1,4 @@
-package pilha;
+package pilhapilha;
 import java.util.Vector;
 
 public interface PilhaVector {

@@ -1,4 +1,4 @@
-package pilha;
+package pilhapilha;
 
 public class PilhaFlamengo {
     public int capacidade;

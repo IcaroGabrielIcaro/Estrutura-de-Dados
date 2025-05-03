@@ -1,12 +1,11 @@
-package pilha;
+package exerFilaPilha;
+
 public interface Pilha {
     public int size();
     public boolean isEmpty();
     public Object top() throws pilhaVaziaExcecao;
     public void push(Object o);
     public Object pop() throws pilhaVaziaExcecao;
-    public void empty();
-    public void adicionaPilha(Pilha p);
 
     public class pilhaVaziaExcecao extends RuntimeException {
         public pilhaVaziaExcecao (String err){
@@ -67,26 +66,6 @@ public interface Pilha {
     
         public int size() {
             return t + 1;
-        }
-
-        // exercicios de casa
-        public void empty() {
-            t = -1;
-        }
-
-        // errado
-        public void adicionaPilha(Pilha p) {
-            PilhaArray temp = new Pilha.PilhaArray(p.size(), 0);
-
-            while (!p.isEmpty()) {
-                temp.push(p.pop());
-            }
-
-            while (!temp.isEmpty()) {
-                Object o = temp.pop();
-                push(o);
-                p.push(o);
-            }
         }
     }
 }

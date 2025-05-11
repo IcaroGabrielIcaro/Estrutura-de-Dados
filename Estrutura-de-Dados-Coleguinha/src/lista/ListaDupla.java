@@ -109,6 +109,7 @@ public interface ListaDupla {
             q.setAnterior(n.getAnterior());
             n.getAnterior().setProximo(q);
             n.setAnterior(q);
+            tamanho++;
         }
 
         public void insertAfter(NoDuplo n, Object o) {
@@ -120,6 +121,7 @@ public interface ListaDupla {
             q.setProximo(n.getProximo());
             n.getProximo().setAnterior(q);
             n.setProximo(q);
+            tamanho++;
         }
 
         public void insertFirst(Object o) {
@@ -127,6 +129,7 @@ public interface ListaDupla {
             q.setAnterior(inicio);
             q.setProximo(inicio.getProximo());
             inicio.setProximo(q);
+            tamanho++;
         }
 
         public void insertLast(Object o) {
@@ -134,6 +137,7 @@ public interface ListaDupla {
             q.setProximo(fim);
             q.setAnterior(fim.getAnterior());
             fim.setAnterior(q);
+            tamanho++;
         }
 
         public void remove(NoDuplo n) { // e se eu tentar remover as sentinelas?
@@ -142,6 +146,7 @@ public interface ListaDupla {
             }
             n.getAnterior().setProximo(n.getProximo());
             n.getProximo().setAnterior(n.getAnterior());
+            tamanho--;
         }
     }
 }

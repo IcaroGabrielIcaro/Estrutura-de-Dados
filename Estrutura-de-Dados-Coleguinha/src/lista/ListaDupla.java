@@ -5,10 +5,10 @@ public interface ListaDupla {
     public boolean isEmpty();
     public boolean isFirst(NoDuplo n) throws EmptyListaDuplaException;
     public boolean isLast(NoDuplo n) throws EmptyListaDuplaException;
-    public Object first() throws EmptyListaDuplaException;
-    public Object last() throws EmptyListaDuplaException;
-    public Object before(NoDuplo p) throws EmptyListaDuplaException;
-    public Object after(NoDuplo p) throws EmptyListaDuplaException;
+    public NoDuplo first() throws EmptyListaDuplaException;
+    public NoDuplo last() throws EmptyListaDuplaException;
+    public NoDuplo before(NoDuplo p) throws EmptyListaDuplaException;
+    public NoDuplo after(NoDuplo p) throws EmptyListaDuplaException;
     public void replaceElement(NoDuplo n, Object o) throws EmptyListaDuplaException;
     public void swapElements(NoDuplo o, NoDuplo q) throws EmptyListaDuplaException;
     public void insertBefore(NoDuplo n, Object o) throws EmptyListaDuplaException;
@@ -16,6 +16,7 @@ public interface ListaDupla {
     public void insertFirst(Object o);
     public void insertLast(Object o);
     public void remove(NoDuplo n) throws EmptyListaDuplaException;
+    public void print();
 
     public class EmptyListaDuplaException extends RuntimeException {
         public EmptyListaDuplaException (String err) {
@@ -29,6 +30,8 @@ public interface ListaDupla {
         private int tamanho;
 
         public ListaDuplaArray () {
+            inicio = new NoDuplo(null);
+            fim = new NoDuplo(null);
             inicio.setProximo(fim);
             fim.setAnterior(inicio);
             tamanho = 0;
@@ -56,32 +59,32 @@ public interface ListaDupla {
             return n == fim.getAnterior();
         }
 
-        public Object first() {
+        public NoDuplo first() {
             if (isEmpty()) {
                 throw new EmptyListaDuplaException("A lista está vazia");
             }
-            return inicio.getProximo().getElemento();
+            return inicio.getProximo();
         }
 
-        public Object last() {
+        public NoDuplo last() {
             if (isEmpty()) {
                 throw new EmptyListaDuplaException("A lista está vazia");
             }
-            return fim.getAnterior().getElemento();
+            return fim.getAnterior();
         }
 
-        public Object before(NoDuplo p) {
+        public NoDuplo before(NoDuplo p) {
             if (isEmpty()) {
                 throw new EmptyListaDuplaException("A lista está vazia");
             }
-            return p.getAnterior().getElemento();
+            return p.getAnterior();
         }
 
-        public Object after(NoDuplo p) {
+        public NoDuplo after(NoDuplo p) {
             if (isEmpty()) {
                 throw new EmptyListaDuplaException("A lista está vazia");
             }
-            return p.getProximo().getElemento();
+            return p.getProximo();
         }
 
         public void replaceElement(NoDuplo n, Object o) { // o que garante que o n vai fazer parte da lista?
@@ -128,6 +131,7 @@ public interface ListaDupla {
             NoDuplo q = new NoDuplo(o);
             q.setAnterior(inicio);
             q.setProximo(inicio.getProximo());
+            inicio.getProximo().setAnterior(q);
             inicio.setProximo(q);
             tamanho++;
         }
@@ -136,6 +140,7 @@ public interface ListaDupla {
             NoDuplo q = new NoDuplo(o);
             q.setProximo(fim);
             q.setAnterior(fim.getAnterior());
+            fim.getAnterior().setProximo(q);
             fim.setAnterior(q);
             tamanho++;
         }
@@ -147,6 +152,14 @@ public interface ListaDupla {
             n.getAnterior().setProximo(n.getProximo());
             n.getProximo().setAnterior(n.getAnterior());
             tamanho--;
+        }
+
+        public void print() {
+            NoDuplo temp = inicio.getProximo(); 
+            while (temp.getElemento() != null) {
+                System.out.println(temp.getElemento());
+                temp = temp.getProximo();
+            }
         }
     }
 }

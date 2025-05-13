@@ -388,27 +388,22 @@ public interface Vetor {
             }
 
             NoDuplo novo = new NoDuplo(o);
+            NoDuplo atual;
 
-            if (r == 0) {
-                novo.setProximo(inicio.getProximo());
-                novo.setAnterior(inicio);
-                inicio.getProximo().setAnterior(novo);
-                inicio.setProximo(novo);
-            } else if (r == size()) {
-                novo.setProximo(fim);
-                novo.setAnterior(fim.getAnterior());
-                fim.getAnterior().setProximo(novo);
-                fim.setAnterior(novo);
+            if (r == tamanho) {
+                atual = fim;
             } else {
-                NoDuplo temp = inicio.getProximo();
+                atual = inicio.getProximo();
                 for (int i = 0; i < r; i++) {
-                    temp = temp.getProximo();
+                    atual = atual.getProximo();
                 }
-                novo.setProximo(temp);
-                novo.setAnterior(temp.getAnterior());
-                temp.getAnterior().setProximo(novo);
-                temp.setAnterior(novo);
             }
+
+            novo.setProximo(atual);
+            novo.setAnterior(atual.getAnterior());
+            atual.getAnterior().setProximo(novo);
+            atual.setAnterior(novo);
+            
             tamanho++;
         }
 
@@ -421,24 +416,23 @@ public interface Vetor {
                 throw new RankForaDoLimiteException("Rank fora do limite");
             }
 
-            Object retorno;
+            NoDuplo alvo;
+
             if (r == 0) {
-                retorno = inicio.getProximo().getElemento();
-                inicio.getProximo().getProximo().setAnterior(inicio);
-                inicio.setProximo(inicio.getProximo().getProximo());
-            } else if (r == size()) {
-                retorno = fim.getAnterior().getElemento();
-                fim.getAnterior().getAnterior().setProximo(fim);
-                fim.setAnterior(fim.getAnterior().getAnterior());
+                alvo = inicio.getProximo();
+            } else if (r == tamanho - 1) {
+                alvo = fim.getAnterior();
             } else {
-                NoDuplo temp = inicio.getProximo();
+                alvo = inicio.getProximo();
                 for (int i = 0; i < r; i++) {
-                    temp = temp.getProximo();
+                    alvo = alvo.getProximo();
                 }
-                retorno = temp.getElemento();
-                temp.getProximo().setAnterior(temp.getAnterior());
-                temp.getAnterior().setProximo(temp.getProximo());
             }
+
+            Object retorno = alvo.getElemento();
+            alvo.getAnterior().setProximo(alvo.getProximo());
+            alvo.getProximo().setAnterior(alvo.getAnterior());
+
             tamanho--;
             return retorno;
         }

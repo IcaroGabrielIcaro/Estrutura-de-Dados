@@ -20,13 +20,17 @@ public class ListaEncadeada implements Lista {
     }
 
     public boolean isFirst(Node n) {
-        validacaoNo(n);
+        if (isEmpty()) {
+            throw new EmptyListaException("A lista está vazia");
+        }
 
         return n == primeiro;
     }
 
     public boolean isLast(Node n) {
-        validacaoNo(n);
+        if (isEmpty()) {
+            throw new EmptyListaException("A lista está vazia");
+        }
 
         return n == ultimo;
     }

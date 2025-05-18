@@ -24,13 +24,17 @@ public class ListaDuplamenteEncadeada implements Lista {
     }
 
     public boolean isFirst(Node n) {
-        validacaoNo(n);
+        if (isEmpty()) {
+            throw new EmptyListaException("A lista está vazia");
+        }
 
         return n == inicio.getProximo();
     }
 
     public boolean isLast(Node n) {
-        validacaoNo(n);
+        if (isEmpty()) {
+            throw new EmptyListaException("A lista está vazia");
+        }
 
         return n == fim.getAnterior();
     }

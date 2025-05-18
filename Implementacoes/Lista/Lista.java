@@ -5,8 +5,8 @@ import Node.Node;
 public interface Lista {
     public int size();
     public boolean isEmpty();
-    public boolean isFirst(Node n) throws EmptyListaException, NoInvalido;
-    public boolean isLast(Node n) throws EmptyListaException, NoInvalido;
+    public boolean isFirst(Node n) throws EmptyListaException;
+    public boolean isLast(Node n) throws EmptyListaException;
     public Node first() throws EmptyListaException;
     public Node last() throws EmptyListaException;
     public Node before(Node p) throws EmptyListaException, NoInvalido;

@@ -1,5 +1,5 @@
 package Exercicios.exerpilha;
-import Pilha.Pilha.PilhaArray;
+import Pilha.PilhaArray;
 
 public class Balanceamento {
     public static boolean balanceado(String expressao) {

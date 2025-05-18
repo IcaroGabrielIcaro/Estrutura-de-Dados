@@ -2,25 +2,23 @@ package Lista;
 
 import Node.Node;
 
-public class ListaArrayCircular implements Lista{
-    private int inicioArray;
-    private int finalArray;
-    private int capacidade;
+public class ListaArray implements Lista{
     private Node[] array;
+    private int capacidade;
+    private int tamanho;
 
-    public ListaArrayCircular(int capacidade) {
-        inicioArray = 0;
-        finalArray = 0;
+    public ListaArray(int capacidade) {
+        tamanho = 0;
         this.capacidade = capacidade;
         array = new Node[capacidade];
     }
 
     public int size() {
-        return (capacidade - inicioArray + finalArray) % capacidade;
+        return tamanho;
     }
 
     public boolean isEmpty() {
-        return inicioArray == finalArray;
+        return tamanho == 0;
     }
 
     public boolean isFirst(Node n) {
@@ -28,7 +26,7 @@ public class ListaArrayCircular implements Lista{
             throw new EmptyListaException("A lista está vazia");
         }
 
-        return array[inicioArray] == n;
+        return array[0] == n;
     }
 
     public boolean isLast(Node n) {
@@ -36,7 +34,7 @@ public class ListaArrayCircular implements Lista{
             throw new EmptyListaException("A lista está vazia");
         }
 
-        return array[(finalArray - 1 + capacidade) % capacidade] == n;
+        return array[size() - 1] == n;
     }
 
     public Node first() {
@@ -44,7 +42,7 @@ public class ListaArrayCircular implements Lista{
             throw new EmptyListaException("A lista está vazia");
         }
 
-        return array[inicioArray];
+        return array[0];
     }
 
     public Node last() {
@@ -52,7 +50,7 @@ public class ListaArrayCircular implements Lista{
             throw new EmptyListaException("A lista está vazia");
         }
 
-        return array[(finalArray - 1 + capacidade) % capacidade];
+        return array[size() - 1];
     }
 
     public Node before(Node n) {
@@ -60,13 +58,13 @@ public class ListaArrayCircular implements Lista{
             throw new EmptyListaException("A lista está vazia");
         }
 
-        if (n == array[inicioArray]) {
+        if (n == array[0]) {
             throw new NoInvalido("O nó é inválido");
         }
 
-        for (int i = (inicioArray + 1) % capacidade; i != finalArray; i = (i + 1) % capacidade) {
+        for (int i = 1; i != size(); i++) {
             if (array[i] == n) {
-                return array[(i - 1 + capacidade) % capacidade];
+                return array[i-1];
             }
         }
 
@@ -78,13 +76,13 @@ public class ListaArrayCircular implements Lista{
             throw new EmptyListaException("A lista está vazia");
         }
 
-        if (n == array[(finalArray - 1 + capacidade) % capacidade]) {
+        if (n == array[size() - 1]) {
             throw new NoInvalido("O nó é inválido");
         }
 
-        for (int i = inicioArray; i != (finalArray - 1 + capacidade); i = (i + 1) % capacidade) {
+        for (int i = 0; i != size() - 1; i++) {
             if (array[i] == n) {
-                return array[(i + 1) % capacidade];
+                return array[i+1];
             }
         }
 
@@ -96,7 +94,7 @@ public class ListaArrayCircular implements Lista{
             throw new EmptyListaException("A lista está vazia");
         }
 
-        for (int i = inicioArray; i != finalArray; i = (i + 1) % capacidade) {
+        for (int i = 0; i != size(); i++) {
             if (array[i] == n) {
                 array[i].setElemento(o);
                 return;
@@ -114,7 +112,7 @@ public class ListaArrayCircular implements Lista{
         Node nodeN = null;
         Node nodeQ = null;
 
-        for (int i = inicioArray; i != finalArray; i = (i + 1) % capacidade) { // procura por ambos para manter o desempenho linear
+        for (int i = 0; i != size(); i++) { // procura por ambos para manter o desempenho linear
             if (array[i] == n) {
                 nodeN = array[i];
             } else if (array[i] == q) {
@@ -140,19 +138,19 @@ public class ListaArrayCircular implements Lista{
             throw new EmptyListaException("A lista está vazia");
         }
 
-        for (int i = inicioArray; i != finalArray; i = (i + 1) % capacidade) {
+        for (int i = 0; i < size(); i++) {
             if (array[i] == n) {
                 if (size() == capacidade - 1) {
                     duplicarTamanho();
                 }
 
-                for (int j = finalArray; j != i; j = (j - 1 + capacidade) % capacidade) {
-                    array[j] = array[(j - 1 + capacidade) % capacidade];
+                for (int j = size(); j > i; j--) {
+                    array[j] = array[j-1];
                 }
                 
                 Node novo = new Node(o);
                 array[i] = novo;
-                finalArray = (finalArray + 1) % capacidade;
+                tamanho++;
                 return;
             }
         }
@@ -165,19 +163,19 @@ public class ListaArrayCircular implements Lista{
             throw new EmptyListaException("A lista está vazia");
         }
 
-        for (int i = (inicioArray + 1) % capacidade; i != finalArray; i = (i + 1) % capacidade) {
+        for (int i = 0; i < size(); i++) {
             if (array[i] == n) {
                 if (size() == capacidade - 1) {
                     duplicarTamanho();
                 }
 
-                for (int j = finalArray; j != i; j = (j - 1 + capacidade) % capacidade) {
-                    array[j] = array[(j - 1 + capacidade) % capacidade];
+                for (int j = size(); j > i; j--) {
+                    array[j] = array[j-1];
                 }
                 
                 Node novo = new Node(o);
-                array[(i + 1) % capacidade] = novo;
-                finalArray = (finalArray + 1) % capacidade;
+                array[i + 1] = novo;
+                tamanho++;
                 return;
             }
         }
@@ -190,9 +188,13 @@ public class ListaArrayCircular implements Lista{
             duplicarTamanho();
         }
 
+        for (int i = size(); i > 0; i--) {
+            array[i] = array[i-1];
+        }
+
         Node novo = new Node(o);
-        inicioArray = (inicioArray - 1 + capacidade) % capacidade;
-        array[inicioArray] = novo;
+        array[0] = novo;
+        tamanho++;
     }
 
     public void insertLast(Object o) {
@@ -201,8 +203,8 @@ public class ListaArrayCircular implements Lista{
         }
 
         Node novo = new Node(o);
-        array[finalArray] = novo;
-        finalArray = (finalArray + 1) % capacidade;
+        array[size()] = novo;
+        tamanho++;
     }
 
     public void remove(Node n) {
@@ -210,12 +212,12 @@ public class ListaArrayCircular implements Lista{
             throw new EmptyListaException("A lista está vazia");
         }
 
-        for (int i = inicioArray; i != finalArray; i = (i + 1) % capacidade) {
+        for (int i = 0; i != size(); i++) {
             if (array[i] == n) {
-                for (int j = i; j != (finalArray - 1 + capacidade) % capacidade; j = (j + 1) % capacidade) {
-                    array[j] = array[(j + 1) % capacidade];
+                for (int j = i; j < size() - 1; j++) {
+                    array[j] = array[j + 1];
                 }
-                finalArray = (finalArray - 1 + capacidade) % capacidade;
+                tamanho--;
                 return;
             }
         }
@@ -223,17 +225,12 @@ public class ListaArrayCircular implements Lista{
         throw new NoInvalido("O nó não existe");
     }
 
-    private void duplicarTamanho() {
-        int novaCapacidade = capacidade * 2;
-        Node[] novoArray = new Node[novaCapacidade];
-        int novoInicio = inicioArray;
-        for (int novoFim = 0; novoFim < size(); novoFim++) {
-            novoArray[novoFim] = array[novoInicio];
-            novoInicio = (novoInicio + 1) % capacidade;
+    public void duplicarTamanho() {
+        capacidade *= 2;
+        Node[] novo = new Node[capacidade];
+        for (int i = 0; i < size(); i++) {
+            novo[i] = array[i];
         }
-        finalArray = size();
-        inicioArray = 0;
-        capacidade = novaCapacidade;
-        array = novoArray;
+        array = novo;
     }
 }

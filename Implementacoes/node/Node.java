@@ -1,4 +1,4 @@
-package node;
+package Node;
 
 public class Node {
     private Object elemento;

@@ -1,6 +1,6 @@
-package exercicios.exerFilaPilha;
+package Exercicios.exerFilaPilha;
 
-import exercicios.exerFilaPilha.Pilha.PilhaArray;
+import Exercicios.exerFilaPilha.Pilha.PilhaArray;
 
 public interface Fila {
     public int tamanho();

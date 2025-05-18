@@ -1,4 +1,4 @@
-package exercicios.exerFilaListaLigada;
+package Exercicios.exerFilaListaLigada;
 
 public interface Pilha {
     public int tamanho();

@@ -1,8 +1,8 @@
-package exercicios.exerFilaListaLigada;
-import exercicios.exerFilaListaLigada.Fila.FilaListaLigada;
-import exercicios.exerFilaListaLigada.Fila.FilaVaziaExcecao;
-import exercicios.exerFilaListaLigada.Pilha.PilhaListaLigada;
-import exercicios.exerFilaListaLigada.Pilha.PilhaVaziaExcecao;
+package Exercicios.exerFilaListaLigada;
+import Exercicios.exerFilaListaLigada.Fila.FilaListaLigada;
+import Exercicios.exerFilaListaLigada.Fila.FilaVaziaExcecao;
+import Exercicios.exerFilaListaLigada.Pilha.PilhaListaLigada;
+import Exercicios.exerFilaListaLigada.Pilha.PilhaVaziaExcecao;
 
 public class TesteFila {
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package exercicios.exerpilha;
+package Exercicios.exerpilha;
 
 public class PilhaFlamengo {
     public int capacidade;

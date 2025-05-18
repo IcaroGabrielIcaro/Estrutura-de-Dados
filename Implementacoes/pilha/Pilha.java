@@ -1,8 +1,8 @@
-package pilha;
+package Pilha;
 
 import java.util.Vector;
 
-import exercicios.exerpilha.PilhaFlamengo;
+import Exercicios.exerpilha.PilhaFlamengo;
 
 public interface Pilha {
     public int size();

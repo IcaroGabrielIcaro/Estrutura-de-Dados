@@ -1,6 +1,6 @@
-package exercicios.exerFilaPilha;
+package Exercicios.exerFilaPilha;
 
-import exercicios.exerFilaPilha.Fila.FilaPilha;
+import Exercicios.exerFilaPilha.Fila.FilaPilha;
 
 public class Programa {
     public static void main(String[] args) {

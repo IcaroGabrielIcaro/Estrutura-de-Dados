@@ -1,6 +1,6 @@
-package vetor;
+package Vetor;
 
-import node.Node;
+import Node.Node;
 
 public interface Vetor {
     public int size();

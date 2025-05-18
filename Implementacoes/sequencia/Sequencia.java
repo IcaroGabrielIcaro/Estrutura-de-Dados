@@ -1,6 +1,6 @@
-package sequencia;
+package Sequencia;
 
-import node.Node;
+import Node.Node;
 
 public interface Sequencia {
     // metodos genericos

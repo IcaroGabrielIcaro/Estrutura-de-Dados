@@ -1,4 +1,4 @@
-package deque;
+package Deque;
 
 public interface Deque {
     public void inserirInicio (Object o);

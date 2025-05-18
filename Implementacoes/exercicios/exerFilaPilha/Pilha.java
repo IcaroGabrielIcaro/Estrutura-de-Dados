@@ -1,4 +1,4 @@
-package exercicios.exerFilaPilha;
+package Exercicios.exerFilaPilha;
 
 public interface Pilha {
     public int size();

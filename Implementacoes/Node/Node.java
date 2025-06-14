@@ -8,10 +8,14 @@ public class Node {
     private Node anterior;
     private Node pai;
     private ArrayList<Node> filhos;
+    private Node filhoEsquerda;
+    private Node filhoDireita;
+    private int numeroFilhos;
 
     public Node (Object o) {
         elemento = o;
         filhos = new ArrayList<>();
+        numeroFilhos = 0;
     }
 
     public Object getElemento() {
@@ -47,18 +51,50 @@ public class Node {
     }
 
     public ArrayList<Node> getFilhos() {
-        return filhos;
+        ArrayList<Node> filhotes = new ArrayList<>();
+
+        if (filhos != null && !filhos.isEmpty()) {
+            return filhos;
+        } else {
+            if (filhoEsquerda != null) {
+                filhotes.add(filhoEsquerda);
+            }
+            if (filhoDireita != null) {
+                filhotes.add(filhoDireita);
+            }
+            return filhotes;
+        }
     }
 
     public void setFilho(Node n) {
         filhos.add(n);
+        numeroFilhos++;
     }
 
     public void removeFilho(Node n) {
         filhos.remove(n);
+        numeroFilhos--;
     }
 
     public int numeroFilhos() {
-        return filhos.size();
+        return numeroFilhos;
+    }
+
+    public void setFilhoEsquerda(Node n) {
+        filhoEsquerda = n;
+        numeroFilhos++;
+    }
+
+    public Node getFilhoEsquerda() {
+        return filhoEsquerda;
+    }
+
+    public void setFilhoDireita(Node n) {
+        filhoDireita = n;
+        numeroFilhos++;
+    }
+
+    public Node getFilhoDireita() {
+        return filhoDireita;
     }
 }

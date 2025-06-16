@@ -1,4 +1,4 @@
-package Arvore;
+package Arvore.excecoes;
 
 public class EmptyTreeException extends RuntimeException {
     public EmptyTreeException (String err) {

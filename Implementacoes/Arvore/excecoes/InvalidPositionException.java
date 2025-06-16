@@ -1,4 +1,4 @@
-package Arvore;
+package Arvore.excecoes;
 
 public class InvalidPositionException extends RuntimeException {
     public InvalidPositionException (String err) {

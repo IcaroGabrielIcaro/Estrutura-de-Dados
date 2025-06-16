@@ -1,5 +1,7 @@
 package Arvore;
 
+import Arvore.excecoes.BoundaryViolationException;
+import Arvore.excecoes.InvalidPositionException;
 import Node.Node;
 
 /**

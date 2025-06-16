@@ -1,11 +1,15 @@
-package Arvore;
+package Arvore.testes;
+import Arvore.AB;
+import Arvore.excecoes.BoundaryViolationException;
+import Arvore.excecoes.InvalidPositionException;
+import Arvore.excecoes.NonEmptyTreeException;
 import Node.Node;
 
 public class TesteArvoreBinaria {
     public static void main(String[] args) {
         try {
             // Instanciando a árvore
-            AB arvore = new AB(null);
+            AB arvore = new AB();
 
             // Teste: adicionar raiz
             Node raiz = arvore.addRoot("A");

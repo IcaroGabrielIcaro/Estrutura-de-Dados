@@ -3,6 +3,10 @@ package Arvore;
 import Node.Node;
 import java.util.Iterator;
 
+import Arvore.excecoes.BoundaryViolationException;
+import Arvore.excecoes.EmptyTreeException;
+import Arvore.excecoes.InvalidPositionException;
+
 /**
  * Interface que define os métodos básicos de uma árvore.
  * 

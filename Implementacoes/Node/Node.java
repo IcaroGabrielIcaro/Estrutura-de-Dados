@@ -11,6 +11,7 @@ public class Node {
     private Node filhoEsquerda;
     private Node filhoDireita;
     private int numeroFilhos;
+    private int posicao;
 
     public Node (Object o) {
         elemento = o;
@@ -96,5 +97,13 @@ public class Node {
 
     public Node getFilhoDireita() {
         return filhoDireita;
+    }
+
+    public void setPosicao(int n) {
+        this.posicao = n;
+    }
+
+    public int getPosicao() {
+        return this.posicao;
     }
 }

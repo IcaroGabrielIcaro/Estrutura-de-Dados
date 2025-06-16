@@ -10,7 +10,7 @@ public class ABPesquisa extends ABGenerica {
 
     public Node treeSearch (Node n, int o) {
         this.checkPosition(n);
-
+        
         int chave = this.key(n);
         if (o == chave) { // se o elemento for encontrado, retorna o nó que tem esse elemento
             return n;
@@ -41,7 +41,7 @@ public class ABPesquisa extends ABGenerica {
             throw new InvalidPositionException("Esse elemento já foi inserido");
         }
 
-        Node novo = new Node(o);
+        Node novo = new Node(String.valueOf(o));
         novo.setPai(position);
 
         if (o < chave) {
@@ -73,9 +73,9 @@ public class ABPesquisa extends ABGenerica {
                 successor = successor.getFilhoEsquerda();
             }
 
+            Object elem = remove(this.key(successor)); // remove o elemento lá debaixo
             position.setElemento(successor.getElemento()); // substitui o valor da posicao que estamos pelo valor substituido
-
-            return remove(this.key(successor)); // remove o elemento lá debaixo
+            return elem;
         }
 
         Node child;

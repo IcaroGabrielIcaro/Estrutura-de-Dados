@@ -1,4 +1,4 @@
-package Arvore;
+package Arvore.interfaces;
 
 import Node.Node;
 import java.util.Iterator;

@@ -1,6 +1,6 @@
 package Arvore.testes;
+import Arvore.ArvoreBinaria.ABExpressoes;
 import Node.Node;
-import Arvore.ABExpressoes;
 
 public class TesteABExpressoes {
     public static void main(String[] args) {

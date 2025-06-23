@@ -1,49 +1,31 @@
-package Arvore;
+package Arvore.ArvoreBinaria;
 
 import Node.Node;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import Arvore.ArvoreGenerica.ArvoreGenerica;
 import Arvore.excecoes.BoundaryViolationException;
-import Arvore.excecoes.EmptyTreeException;
 import Arvore.excecoes.InvalidPositionException;
+import Arvore.interfaces.ArvoreBinaria;
 
-public class ABGenerica implements ArvoreBinaria {
-    protected Node raiz;
-    protected int tamanho;
-
-    /* Cria uma árvore binária vazia. */
+public class ABGenerica extends ArvoreGenerica implements ArvoreBinaria {
     public ABGenerica () {
-        this.raiz = null; // Inicia com uma árvore vazia
-        this.tamanho = 0;
+        super();
     }
 
-    /* Retorna o número de nós da árvore. */
-    public int size() {
-        return this.tamanho;
-    }
-
-    /* Retorna se a árvore está vazia. */
-    public boolean isEmpty() {
-        return size() == 0;
-    }
-
+    @Override
     /* Retorna se um nó é interno. */
     public boolean isInternal(Node n) throws InvalidPositionException {
         checkPosition(n); // metodo auxiliar
         return (hasLeft(n) || hasRight(n));
     }
 
+    @Override
     /* Retorna se um nó é exdterno. */
     public boolean isExternal(Node n) throws InvalidPositionException {
         checkPosition(n);
         return (!hasLeft(n) && !hasRight(n));
-    }
-
-    /* Retorna se um nó é a raiz. */
-    public boolean isRoot(Node n) throws InvalidPositionException {
-        checkPosition(n);
-        return (n == root());
     }
 
     /* Retorna se um nó tem o filho da esquerda. */
@@ -56,14 +38,6 @@ public class ABGenerica implements ArvoreBinaria {
     public boolean hasRight(Node n) throws InvalidPositionException {
         checkPosition(n);
         return (n.getFilhoDireita() != null);
-    }
-
-    /* Retorna a raiz da árvore. */
-    public Node root() throws EmptyTreeException {
-        if (this.raiz == null) {
-            throw new EmptyTreeException("A árvore está vazia");
-        }
-        return this.raiz;
     }
 
     /* Retorna o filho da esquerda de um nó. */
@@ -86,16 +60,7 @@ public class ABGenerica implements ArvoreBinaria {
         return right;
     }
 
-    /* Retorna o pai de um nó. */
-    public Node parent(Node n) throws InvalidPositionException, BoundaryViolationException{
-        checkPosition(n);
-        Node parent = n.getPai();
-        if (parent == null) {
-            throw new BoundaryViolationException("Sem pai");
-        }
-        return parent;
-    }
-
+    @Override
     /* Retorna um iterador contendo os filhos de um nó. */
     public Iterator<Node> children(Node n) throws InvalidPositionException {
         checkPosition(n);
@@ -109,6 +74,7 @@ public class ABGenerica implements ArvoreBinaria {
         return children.iterator();
     }
 
+    @Override
     /* Retorna uma coleção iterável contendo os elementos dos nós da árvore. */
     public Iterator<Object> elements() {
         ArrayList<Object> array = new ArrayList<>();
@@ -119,21 +85,18 @@ public class ABGenerica implements ArvoreBinaria {
     }
 
     private void inOrderElem(Node n, ArrayList<Object> array) throws InvalidPositionException {
-        if (isInternal(n)) {
-            if (this.hasLeft(n)) {
-                this.inOrderElem(this.left(n), array);
-            }
+        if (this.hasLeft(n)) {
+            this.inOrderElem(this.left(n), array);
         }
 
         array.add(n.getElemento());
 
-        if (isInternal(n)) {
-            if (this.hasRight(n)) {
-                this.inOrderElem(this.right(n), array);
-            }
+        if (this.hasRight(n)) {
+            this.inOrderElem(this.right(n), array);
         }
     }
 
+    @Override
     /* Retorna uma coleção iterável contendo os nós da árvore. */
     public Iterator<Node> nos() {
         ArrayList<Node> array = new ArrayList<>();
@@ -144,54 +107,33 @@ public class ABGenerica implements ArvoreBinaria {
     }
 
     private void inOrderNo(Node n, ArrayList<Node> array) {
-        if (isInternal(n)) {
-            if (this.hasLeft(n)) {
-                this.inOrderNo(this.left(n), array);
-            }
+        if (this.hasLeft(n)) {
+            this.inOrderNo(this.left(n), array);
         }
 
         array.add(n);
 
-        if (isInternal(n)) {
-            if (this.hasRight(n)) {
-                this.inOrderNo(this.right(n), array);
-            }
+        if (this.hasRight(n)) {
+            this.inOrderNo(this.right(n), array);
         }
     }
 
-    /* Substitui o elemento armazenado no nó. */
-    public Object replace(Node n, Object o) throws InvalidPositionException {
-        checkPosition(n);
-        Object temp = n.getElemento();
-        n.setElemento(o);
-        return temp;
-    }
-
-    /* Se n é um nó de árvore binária, converte para Node, se não, lança exceção */
-    protected Node checkPosition(Node n) throws InvalidPositionException {
-        if (n == null || !(n instanceof Node)) {
-            throw new InvalidPositionException("A posição é invalida");
-        }
-        return n;
-    }
-
-    public int depth(Node n){
-        if (this.isRoot(n)) {
-            return 0;
-        } else {
-            return 1 + depth(n.getPai());
-        }
-    }
-
+    @Override
     public int height(Node n){
         if (this.isExternal(n)) {
             return 0;
         }
 
         int h = 0;
-        for (Node filho : n.getFilhos()) {
-            h = Math.max(h, height(filho));
+
+        if (this.hasLeft(n)) {
+            h = Math.max(h, height(n.getFilhoEsquerda()));
         }
+        
+        if (this.hasRight(n)) {
+            h = Math.max(h, height(n.getFilhoDireita()));
+        }
+
         return 1 + h;
     }
 }

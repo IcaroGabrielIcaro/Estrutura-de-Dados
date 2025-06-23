@@ -1,4 +1,4 @@
-package Arvore;
+package Arvore.ArvoreBinaria;
 
 import Node.Node;
 
@@ -9,6 +9,7 @@ import Arvore.excecoes.BoundaryViolationException;
 import Arvore.excecoes.EmptyTreeException;
 import Arvore.excecoes.InvalidPositionException;
 import Arvore.excecoes.NonEmptyTreeException;
+import Arvore.interfaces.ArvoreBinaria;
 
 public class ABArray implements ArvoreBinaria {
     private Node[] array;

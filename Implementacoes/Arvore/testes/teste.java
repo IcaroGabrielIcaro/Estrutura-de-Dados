@@ -3,7 +3,7 @@ import Node.Node;
 
 import java.util.Iterator;
 
-import Arvore.ABArray;
+import Arvore.ArvoreBinaria.ABArray;
 
 public class teste {
     public static void main(String[] args) {

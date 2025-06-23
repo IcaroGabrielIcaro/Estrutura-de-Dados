@@ -1,4 +1,4 @@
-package Arvore;
+package Arvore.ArvoreBinaria;
 import Node.Node;
 
 public class ABExpressoes extends AB {

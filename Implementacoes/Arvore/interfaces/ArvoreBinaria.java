@@ -1,4 +1,4 @@
-package Arvore;
+package Arvore.interfaces;
 
 import Arvore.excecoes.BoundaryViolationException;
 import Arvore.excecoes.InvalidPositionException;

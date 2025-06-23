@@ -1,5 +1,5 @@
 package Arvore.testes;
-import Arvore.AB;
+import Arvore.ArvoreBinaria.AB;
 import Arvore.excecoes.BoundaryViolationException;
 import Arvore.excecoes.InvalidPositionException;
 import Arvore.excecoes.NonEmptyTreeException;

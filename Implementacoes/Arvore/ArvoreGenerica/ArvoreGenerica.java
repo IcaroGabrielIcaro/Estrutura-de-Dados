@@ -1,4 +1,4 @@
-package Arvore;
+package Arvore.ArvoreGenerica;
 
 import Node.Node;
 
@@ -8,14 +8,14 @@ import java.util.Iterator;
 import Arvore.excecoes.BoundaryViolationException;
 import Arvore.excecoes.EmptyTreeException;
 import Arvore.excecoes.InvalidPositionException;
-import Arvore.excecoes.NonEmptyTreeException;
+import Arvore.interfaces.Arvore;
 
 public class ArvoreGenerica implements Arvore {
     public Node raiz;
     public int tamanho;
 
     /* Cria uma árvore genérica vazia. */
-    public ArvoreGenerica (Object o) {
+    public ArvoreGenerica () {
         this.raiz = null;
         this.tamanho = 0;
     }
@@ -33,13 +33,13 @@ public class ArvoreGenerica implements Arvore {
     /* Retorna se um nó é interno. */
     public boolean isInternal(Node n) throws InvalidPositionException {
         checkPosition(n);
-        return n.numeroFilhos() > 0;
+        return n.getFilhos().size() > 0;
     }
 
     /* Retorna se um nó é externo. */
     public boolean isExternal(Node n) throws InvalidPositionException {
         checkPosition(n);
-        return n.numeroFilhos() == 0;
+        return n.getFilhos().size() == 0;
     }
 
     /* Retorna se um nó é a raiz. */
@@ -113,43 +113,9 @@ public class ArvoreGenerica implements Arvore {
         n.setElemento(o);
         return temp;
     }
-
-    /* Insere a raiz em uma árvore vazia. */
-    public Node addRoot(Object o) throws NonEmptyTreeException {
-        if (!this.isEmpty()) {
-            throw new NonEmptyTreeException("A árvore já tem uma raiz");
-        }
-        this.tamanho = 1;
-        this.raiz = new Node(o);
-        return this.raiz;
-    }
-
-    /* Insere um filho em um nó */
-    public Node insertChild(Node n, Object o) throws InvalidPositionException {
-        checkPosition(n);
-        Node ww = new Node(o);
-        ww.setPai(n);
-        n.setFilho(ww);
-        this.tamanho++;
-        return ww;
-    }
-
-    /* Remove um nó externo */
-    public Object remove(Node n) throws InvalidPositionException {
-        checkPosition(n);
-        Node parent = n.getPai();
-        if (this.isExternal(n)) {
-            parent.removeFilho(n);
-        } else {
-            throw new InvalidPositionException("Não pode remover um nó com filhos");
-        }
-        Object temp = n.getElemento();
-        this.tamanho--;
-        return temp;
-    }
     
     /* Se n é um ní de árvore generica, converte para Node, se não, lança exceção */
-    private Node checkPosition(Node n) throws InvalidPositionException {
+    protected Node checkPosition(Node n) throws InvalidPositionException {
         if (n == null || !(n instanceof Node)) {
             throw new InvalidPositionException("A posição é invalida");
         }

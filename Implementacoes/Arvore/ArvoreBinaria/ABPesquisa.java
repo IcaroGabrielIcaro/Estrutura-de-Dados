@@ -1,4 +1,4 @@
-package Arvore;
+package Arvore.ArvoreBinaria;
 
 import Arvore.excecoes.InvalidPositionException;
 import Node.Node;

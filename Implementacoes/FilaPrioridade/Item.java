@@ -1,5 +1,7 @@
 package FilaPrioridade;
 
+import FilaPrioridade.Interfaces.Entry;
+
 public class Item implements Entry{
     private Object key;
     private Object value;

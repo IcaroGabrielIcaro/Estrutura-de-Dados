@@ -139,4 +139,13 @@ public interface Arvore {
      * @throws InvalidPositionException se a posição for inválida
      */
     public Object replace(Node n, Object o) throws InvalidPositionException;
+
+    /**
+     * Troca os elementos armazenados em dois nós da árvore.
+     *
+     * @param n1 o primeiro nó
+     * @param n2 o segundo nó
+     * @throws InvalidPositionException se qualquer uma das posições for inválida
+     */
+    public void swapElements(Node n1, Node n2) throws InvalidPositionException;
 }

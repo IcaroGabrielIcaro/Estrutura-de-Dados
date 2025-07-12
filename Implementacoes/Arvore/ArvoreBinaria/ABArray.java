@@ -186,6 +186,14 @@ public class ABArray implements ArvoreBinaria {
         return temp;
     }
 
+    public void swapElements(Node n1, Node n2) {
+        this.checkPosition(n1);
+        this.checkPosition(n2);
+        Object temp = n1.getElemento();
+        n1.setElemento(n2.getElemento());
+        n2.setElemento(temp);
+    }
+
     public Node sibling(Node n) throws InvalidPositionException, BoundaryViolationException {
         this.checkPosition(n);
         int posicao = n.getPosicao();

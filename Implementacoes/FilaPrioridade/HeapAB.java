@@ -1,6 +1,7 @@
 package FilaPrioridade;
 
 import Arvore.ArvoreBinaria.AB;
+import FilaPrioridade.Interfaces.FilaPrioridade;
 import Node.Node;
 
 public class HeapAB implements FilaPrioridade{

@@ -113,6 +113,14 @@ public class ArvoreGenerica implements Arvore {
         n.setElemento(o);
         return temp;
     }
+
+    public void swapElements(Node n1, Node n2) {
+        checkPosition(n1);
+        checkPosition(n2);
+        Object temp = n1.getElemento();
+        n1.setElemento(n2.getElemento());
+        n2.setElemento(temp);
+    }
     
     /* Se n é um ní de árvore generica, converte para Node, se não, lança exceção */
     protected Node checkPosition(Node n) throws InvalidPositionException {

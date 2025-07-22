@@ -1,6 +1,6 @@
 package Dicionario.Interfaces;
 
 public interface Entry {
-    public Object key();
+    public int key();
     public Object value();
 }

@@ -8,7 +8,7 @@ public class Hash implements Dict{
     private int tamanho;
 
     public Hash (int capacidade) {
-        if (!this.isPrimo(capacidade)) {
+        if (this.isPrimo(capacidade)) {
             this.capacidade = capacidade;
         } else {
             this.capacidade = this.proximoPrimo(capacidade);
@@ -49,18 +49,60 @@ public class Hash implements Dict{
         return candidato;
     }
 
-    public void insertItem (int k, Object o) {
-        Item novo = new Item(k, o);
-
+    public Object findElement(int k) {
         int index = this.dispersao(k);
 
-        while (!(array[index] == null || array[index].value().equals("Available"))) {
-            index = index + this.segundaDispersao(k);
+        while (!(this.array[index] == null) || this.array[index].value().equals("Available")) {
+            if (this.array[index].key() == k) {
+                break;
+            }
+            index = index + pulo(k, false);
+        }
+
+        return this.array[index];
+    }
+
+    public void insertItem (int k, Object o) {
+        if (this.tamanho >= this.capacidade / 2) {
+            this.reHash();
+        }
+
+        Item novo = new Item(k, o);
+
+        Object posicao = this.findElement(k);
+
+        if (posicao != null) {
+            throw new RuntimeException("Chave já ocupada");
         }
         
         this.array[index] = novo;
 
         this.tamanho++;
+    }
+
+    private void reHash() {
+        int nova_capacidade = this.capacidade * 2;
+        if (this.isPrimo(nova_capacidade)) {
+            this.capacidade = nova_capacidade;
+        } else {
+            this.capacidade = this.proximoPrimo(nova_capacidade);
+        }
+
+        Item[] novoArray = new Item[this.capacidade];
+
+        for (int i = 0; i < this.array.length; i++) {
+            if (!(this.array[i] == null) || this.array[i].value().equals("Available")) {
+                int index = this.dispersao(this.array[i].key());
+
+                while(!(novoArray[index] == null)) {
+                    index = index + this.pulo(this.array[i].key(), false);
+                }
+
+                novoArray[index] = this.array[i];
+            }
+        }
+
+        this.array = novoArray;
     }
 
     private int dispersao (int k) {
@@ -69,9 +111,14 @@ public class Hash implements Dict{
         return compressao;
     }
 
-    private int segundaDispersao (int k) {
-        int hash = this.segundoCodigoHash(k);
-        int compressao = this.segundoMapaCompressao(hash);
+    private int pulo (int k, boolean is_doubleHash) {
+        int compressao;
+        if (is_doubleHash) {
+            int hash = this.segundoCodigoHash(k);
+            compressao = this.segundoMapaCompressao(hash);
+        } else {
+            compressao = 1;
+        }
         return compressao; 
     }
 
@@ -89,5 +136,9 @@ public class Hash implements Dict{
 
     private int segundoMapaCompressao (int hash) {
         return hash % this.proximoPrimo(this.capacidade / 2);
+    }
+
+    public Item removeElement(int k) {
+
     }
 }

@@ -11,8 +11,16 @@ public class Item implements Entry{
         this.value = v;
     }
 
+    public void setKey(int k) {
+        this.key = k;
+    }
+
     public int key() {
         return this.key;
+    }
+
+    public void setValue(Object o) {
+        this.value = o;
     }
 
     public Object value() {

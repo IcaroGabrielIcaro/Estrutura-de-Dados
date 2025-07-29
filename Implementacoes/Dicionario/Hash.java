@@ -1,13 +1,16 @@
 package Dicionario;
 
 import Dicionario.Interfaces.Dict;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 public class Hash implements Dict{
     private Item[] array;
     private int capacidade;
     private int tamanho;
+    private boolean is_doubleHash;
 
-    public Hash (int capacidade) {
+    public Hash (int capacidade, boolean is_doubleHash) {
         if (this.isPrimo(capacidade)) {
             this.capacidade = capacidade;
         } else {
@@ -15,6 +18,7 @@ public class Hash implements Dict{
         }
         this.array = new Item[this.capacidade];
         this.tamanho = 0;
+        this.is_doubleHash = is_doubleHash;
     }
 
     private boolean isPrimo(int num) {
@@ -49,17 +53,30 @@ public class Hash implements Dict{
         return candidato;
     }
 
-    public Object findElement(int k) {
+    public Item findElement(int k) {
         int index = this.dispersao(k);
 
-        while (!(this.array[index] == null) || this.array[index].value().equals("Available")) {
+        while (this.array[index] != null && !this.array[index].value().equals("Available")) {
             if (this.array[index].key() == k) {
                 break;
             }
-            index = index + pulo(k, false);
+            index = (index + pulo(k, this.is_doubleHash)) % this.capacidade;
         }
 
         return this.array[index];
+    }
+
+    public int findElementIndex(int k) {
+        int index = this.dispersao(k);
+
+        while (this.array[index] != null && !this.array[index].value().equals("Available")) {
+            if(this.array[index].key() == k) {
+                break;
+            }
+            index = (index + pulo(k, this.is_doubleHash)) % this.capacidade;
+        }
+
+        return index;
     }
 
     public void insertItem (int k, Object o) {
@@ -69,7 +86,8 @@ public class Hash implements Dict{
 
         Item novo = new Item(k, o);
 
-        Object posicao = this.findElement(k);
+        Item posicao = this.findElement(k); // testar para saber se eu consigo mudar diretamente na posicao, sem o index!!!
+        int index = this.findElementIndex(k);
 
         if (posicao != null) {
             throw new RuntimeException("Chave já ocupada");
@@ -91,7 +109,7 @@ public class Hash implements Dict{
         Item[] novoArray = new Item[this.capacidade];
 
         for (int i = 0; i < this.array.length; i++) {
-            if (!(this.array[i] == null) || this.array[i].value().equals("Available")) {
+            if (this.array[i] != null && !this.array[i].value().equals("Available")) {
                 int index = this.dispersao(this.array[i].key());
 
                 while(!(novoArray[index] == null)) {
@@ -139,6 +157,49 @@ public class Hash implements Dict{
     }
 
     public Item removeElement(int k) {
+        int index = this.findElementIndex(k);
 
+        if (this.array[index] == null || this.array[index].value().equals("Available")) {
+            throw new RuntimeException("Sem elemento para ser removido");
+        }
+
+        Item elemento = this.array[index];
+        this.array[index].setValue("Available");
+
+        this.tamanho--;
+        return elemento;
+    }
+
+    public int size() {
+        return this.tamanho;
+    }
+
+    public boolean isEmpty() {
+        return this.tamanho == 0;
+    }
+
+    public Iterator<Integer> keys() {
+        ArrayList<Integer> array = new ArrayList<>();
+        if (this.tamanho != 0) {
+            for (int i = 0; i < this.capacidade; i++) {
+                if (this.array[i] != null && !(this.array[i].value().equals("Available"))) {
+                    array.add(this.array[i].key());
+                }
+            }
+        }
+        return array.iterator();
+    }
+
+    public Iterator<Item> elements() {
+        ArrayList<Item> array = new ArrayList<>();
+        if (this.tamanho != 0) {
+            for(int i = 0; i < this.capacidade; i++) {
+                if (this.array[i] != null && !(this.array[i].value().equals("Available"))) {
+                    array.add(this.array[i]);
+                }
+            }
+        }
+
+        return array.iterator();
     }
 }

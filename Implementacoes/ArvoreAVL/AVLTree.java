@@ -1,4 +1,4 @@
-package EstruturaDeDadosDois.ArvoreAVL;
+package ArvoreAVL;
 
 public class AVLTree {
     private NodeAVL root;
@@ -9,48 +9,68 @@ public class AVLTree {
         this.size = 0;
     }
 
-    // public void ajeitarInsercao(NodeAVL n) {
+    // public void insertionAdjust(NodeAVL n) {
     // NodeAVL parent = n.getParent();
-    // if (parent.getFB() == 0) return;
 
-    // int factor = parent.getLeftChild() == n ? -1 : 1;
+    // int direction = parent.getLeftChild() == n ? 1 : -1;
 
-    // parent.setFB(parent.getFB() + factor);
+    // parent.setFB(parent.getFB() + direction);
 
-    // this.ajeitarInsercao(parent);
+    // if (parent.getFB() == 2 || parent.getFB() == -2) {
+    // this.rebalance(parent);
+    // return;
     // }
 
-    // public void ajeitarRemocao(NodeAVL n) {
-    // NodeAVL parent = n.getParent();
-    // if (parent.getFB() != 0) return;
+    // if (parent.getFB() == 0 || parent == this.root) return;
 
-    // int factor = parent.getLeftChild() == n ? 1 : -1;
-
-    // parent.setFB(parent.getFB() + factor);
-
-    // this.ajeitarRemocao(parent);
+    // this.insertionAdjust(parent);
     // }
 
-    public void adjust(NodeAVL n, boolean insertion) {
+    // public void remotionAdjust(NodeAVL n) {
+    // NodeAVL parent = n.getParent();
+
+    // int direction = parent.getLeftChild() == n ? -1 : 1;
+
+    // parent.setFB(parent.getFB() + direction);
+
+    // if (parent.getFB() == 2 || parent.getFB() == -2) {
+    // this.rebalance(parent);
+    // return;
+    // }
+
+    // if (parent.getFB() != 0 || parent == this.root) return;
+
+    // this.remotionAdjust(parent);
+    // }
+
+    public void adjust(NodeAVL n, boolean isInsertion) {
         NodeAVL parent = n.getParent();
         if (parent == null)
             return;
 
-        if (insertion && parent.getFB() == 0)
-            return;
-        if (!insertion && parent.getFB() != 0)
-            return;
-
         int direction;
-        if (insertion) {
-            direction = (parent.getLeftChild() == n) ? -1 : 1;
-        } else {
+        if (isInsertion) {
             direction = (parent.getLeftChild() == n) ? 1 : -1;
+        } else {
+            direction = (parent.getLeftChild() == n) ? -1 : 1;
         }
 
         parent.setFB(parent.getFB() + direction);
 
-        this.adjust(parent, insertion);
+        if (parent.getFB() == 2 || parent.getFB() == -2) {
+            this.rebalance(parent);
+            return;
+        }
+
+        if (isInsertion) {
+            if (parent.getFB() == 0 || parent == this.root)
+                return;
+        } else {
+            if (parent.getFB() != 0 || parent == this.root)
+                return;
+        }
+
+        this.adjust(parent, isInsertion);
     }
 
     public void rebalance(NodeAVL n) {
@@ -60,7 +80,7 @@ public class AVLTree {
 
             NodeAVL left = n.getLeftChild();
 
-            if (left != null && left.getFB() < 0) {
+            if (left.getFB() < 0) {
                 this.doubleRightRotation(n, left);
             } else {
                 this.simpleRightRotation(n, left);
@@ -72,7 +92,7 @@ public class AVLTree {
 
             NodeAVL right = n.getRightChild();
 
-            if (right != null && right.getFB() > 0) {
+            if (right.getFB() > 0) {
                 this.doubleLeftRotation(n, right);
             } else {
                 this.simpleLeftRotation(n, right);
@@ -161,5 +181,38 @@ public class AVLTree {
     public void doubleRightRotation(NodeAVL parent, NodeAVL leftChild) {
         this.simpleLeftRotation(leftChild, leftChild.getRightChild());
         this.simpleRightRotation(parent, leftChild);
+    }
+
+    public NodeAVL search(int value) {
+        NodeAVL actual = this.root;
+
+        while (actual.getValue() != value) {
+            if (value < actual.getValue()) {
+                if (actual.getLeftChild() == null) {
+                    break;
+                }
+                actual = actual.getLeftChild();
+            } else {
+                if (actual.getRightChild() == null) {
+                    break;
+                }
+                actual = actual.getRightChild();
+            }
+        }
+
+        return actual;
+    }
+
+    public void insertion(int value) {
+        NodeAVL newNode = new NodeAVL(value);
+        NodeAVL n = this.search(value);
+
+        if (newNode.getValue() < n.getValue()) {
+            n.setLeftChild(newNode);
+        } else {
+            n.setRightChild(newNode);
+        }
+        newNode.setParent(n);
+        this.adjust(newNode, true);
     }
 }

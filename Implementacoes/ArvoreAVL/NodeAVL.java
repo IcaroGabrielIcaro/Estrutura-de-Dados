@@ -1,4 +1,4 @@
-package EstruturaDeDadosDois.ArvoreAVL;
+package ArvoreAVL;
 
 public class NodeAVL {
     private int value;
@@ -9,6 +9,7 @@ public class NodeAVL {
 
     public NodeAVL(int value) {
         this.value = value;
+        this.FB = 0;
     }
 
     // getters

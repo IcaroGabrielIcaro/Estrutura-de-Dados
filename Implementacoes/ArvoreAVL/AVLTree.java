@@ -9,6 +9,64 @@ public class AVLTree {
         this.size = 0;
     }
 
+    public int size() {
+        return this.size;
+    }
+
+    public boolean isRoot(NodeAVL n) {
+        return n == this.root;
+    }
+
+    public boolean hasLeft(NodeAVL n) {
+        return n.getLeftChild() != null;
+    }
+
+    public boolean hasRight(NodeAVL n) {
+        return n.getRightChild() != null;
+    }
+
+    public boolean isExternal(NodeAVL n) {
+        return !hasLeft(n) && !hasRight(n);
+    }
+
+    public boolean isInternal(NodeAVL n) {
+        return !isExternal(n);
+    }
+
+    public NodeAVL left(NodeAVL n) {
+        return n.getLeftChild();
+    }
+
+    public NodeAVL right(NodeAVL n) {
+        return n.getRightChild();
+    }
+
+    public int height(NodeAVL n) {
+        if (this.isExternal(n)) {
+            return 0;
+        }
+
+        int h = 0;
+
+        if (this.hasLeft(n)) {
+            h = Math.max(h, height(n.getLeftChild()));
+        }
+
+        if (this.hasRight(n)) {
+            h = Math.max(h, height(n.getRightChild()));
+        }
+
+        return 1 + h;
+    }
+
+    public int depth(NodeAVL n) {
+        if (this.isRoot(n)) {
+            return 0;
+        } else {
+            return 1 + this.depth(n.getParent());
+        }
+    }
+
     // public void insertionAdjust(NodeAVL n) {
     // NodeAVL parent = n.getParent();
 
@@ -85,9 +143,6 @@ public class AVLTree {
             } else {
                 this.simpleRightRotation(n, left);
             }
-
-            n.setFB(n.getFB() + 1 - Math.min(left.getFB(), 0));
-            left.setFB(left.getFB() + 1 - Math.max(n.getFB(), 0));
         } else if (value == -2) {
 
             NodeAVL right = n.getRightChild();
@@ -97,9 +152,6 @@ public class AVLTree {
             } else {
                 this.simpleLeftRotation(n, right);
             }
-
-            n.setFB(n.getFB() + 1 - Math.max(right.getFB(), 0));
-            right.setFB(right.getFB() + 1 - Math.min(n.getFB(), 0));
         }
     }
 
@@ -145,6 +197,9 @@ public class AVLTree {
         }
 
         rightChild.setParent(grandParent);
+
+        parent.setFB(parent.getFB() + 1 - Math.max(rightChild.getFB(), 0));
+        rightChild.setFB(rightChild.getFB() + 1 - Math.min(parent.getFB(), 0));
     }
 
     public void simpleRightRotation(NodeAVL parent, NodeAVL leftChild) {
@@ -171,6 +226,9 @@ public class AVLTree {
         }
 
         leftChild.setParent(grandParent);
+
+        parent.setFB(parent.getFB() + 1 - Math.min(leftChild.getFB(), 0));
+        leftChild.setFB(leftChild.getFB() + 1 - Math.max(parent.getFB(), 0));
     }
 
     public void doubleLeftRotation(NodeAVL parent, NodeAVL rightChild) {
@@ -214,5 +272,144 @@ public class AVLTree {
         }
         newNode.setParent(n);
         this.adjust(newNode, true);
+        this.size++;
+    }
+
+    private void swapElements(NodeAVL a, NodeAVL b) {
+        int temp = a.getValue();
+        a.setValue(b.getValue());
+        b.setValue(temp);
+    }
+
+    // public void remove(int value) {
+    // NodeAVL n = this.search(value);
+    // if (n.getValue() != value) return;
+
+    // NodeAVL right = n.getRightChild();
+    // if (right != null) {
+    // NodeAVL successor = right;
+    // while (successor.getLeftChild() != null) {
+    // successor = successor.getLeftChild();
+    // }
+    // this.swapElements(n, successor);
+    // this.remove(successor.getValue());
+    // return;
+    // }
+
+    // NodeAVL left = n.getLeftChild();
+    // if (left != null) {
+    // NodeAVL predecessor = left;
+    // while (predecessor.getRightChild() != null) {
+    // predecessor = predecessor.getRightChild();
+    // }
+    // this.swapElements(n, predecessor);
+    // this.remove(predecessor.getValue());
+    // return;
+    // }
+
+    // NodeAVL parent = n.getParent();
+    // if (parent == null) {
+    // this.root = null;
+    // } else {
+    // if (n == parent.getLeftChild()) {
+    // parent.setLeftChild(null);
+    // } else {
+    // parent.setRightChild(null);
+    // }
+    // }
+
+    // n.setParent(null);
+    // n.setLeftChild(null);
+    // n.setRightChild(null);
+    // }
+
+    public void remove(int value) {
+        NodeAVL n = this.search(value);
+        if (n.getValue() != value)
+            return;
+
+        NodeAVL left = n.getLeftChild();
+        NodeAVL right = n.getRightChild();
+
+        if (left != null && right != null) {
+            NodeAVL sucessor = right;
+            while (sucessor.getLeftChild() != null) {
+                sucessor = sucessor.getLeftChild();
+            }
+            this.swapElements(n, sucessor);
+            this.remove(sucessor.getValue());
+            return;
+        }
+
+        NodeAVL child;
+        if (left != null)
+            child = left;
+        else if (right != null)
+            child = right;
+        else
+            child = null;
+
+        if (n == this.root) {
+            this.root = child;
+            if (child != null)
+                child.setParent(null);
+        } else {
+            NodeAVL parent = n.getParent();
+            if (n == parent.getLeftChild())
+                parent.setLeftChild(child);
+            else
+                parent.setRightChild(child);
+            if (child != null)
+                child.setParent(parent);
+
+            this.adjust(parent, false);
+        }
+
+        this.size--;
+    }
+
+    public void print() {
+        int linhas = this.height(this.root) + 1;
+        int colunas = this.size();
+        String[][] matriz = new String[linhas][colunas];
+
+        for (int i = 0; i < linhas; i++) {
+            for (int j = 0; j < colunas; j++) {
+                matriz[i][j] = " ";
+            }
+        }
+
+        int[] colunaAtual = { 0 };
+
+        this.inOrderPrint(this.root, matriz, colunaAtual);
+
+        for (int i = 0; i < linhas; i++) {
+            for (int j = 0; j < colunas; j++) {
+                System.out.print(matriz[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    private void inOrderPrint(NodeAVL n, String[][] matriz, int[] colunaAtual) {
+        if (n == null) {
+            return;
+        }
+
+        if (isInternal(n)) {
+            if (this.hasLeft(n)) {
+                inOrderPrint(this.left(n), matriz, colunaAtual);
+            }
+        }
+
+        int linha = this.depth(n);
+        int coluna = colunaAtual[0]++;
+        matriz[linha][coluna] = String.valueOf(n.getValue());
+
+        if (isInternal(n)) {
+            if (this.hasRight(n)) {
+                inOrderPrint(this.right(n), matriz, colunaAtual);
+            }
+        }
     }
 }

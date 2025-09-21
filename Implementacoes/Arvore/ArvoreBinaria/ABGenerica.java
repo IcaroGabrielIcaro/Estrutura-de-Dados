@@ -10,7 +10,7 @@ import Arvore.excecoes.InvalidPositionException;
 import Arvore.interfaces.ArvoreBinaria;
 
 public class ABGenerica extends ArvoreGenerica implements ArvoreBinaria {
-    public ABGenerica () {
+    public ABGenerica() {
         super();
     }
 
@@ -52,7 +52,7 @@ public class ABGenerica extends ArvoreGenerica implements ArvoreBinaria {
 
     /* Retorna o filho da direita de um nó. */
     public Node right(Node n) throws InvalidPositionException, BoundaryViolationException {
-       checkPosition(n);
+        checkPosition(n);
         Node right = n.getFilhoDireita();
         if (right == null) {
             throw new BoundaryViolationException("Sem filho direito");
@@ -119,7 +119,7 @@ public class ABGenerica extends ArvoreGenerica implements ArvoreBinaria {
     }
 
     @Override
-    public int height(Node n){
+    public int height(Node n) {
         if (this.isExternal(n)) {
             return 0;
         }
@@ -129,11 +129,56 @@ public class ABGenerica extends ArvoreGenerica implements ArvoreBinaria {
         if (this.hasLeft(n)) {
             h = Math.max(h, height(n.getFilhoEsquerda()));
         }
-        
+
         if (this.hasRight(n)) {
             h = Math.max(h, height(n.getFilhoDireita()));
         }
 
         return 1 + h;
+    }
+
+    public void print() {
+        int linhas = this.height(raiz) + 1;
+        int colunas = this.size();
+        String[][] matriz = new String[linhas][colunas];
+
+        for (int i = 0; i < linhas; i++) {
+            for (int j = 0; j < colunas; j++) {
+                matriz[i][j] = " ";
+            }
+        }
+
+        int[] colunaAtual = { 0 };
+
+        this.inOrderPrint(raiz, matriz, colunaAtual);
+
+        for (int i = 0; i < linhas; i++) {
+            for (int j = 0; j < colunas; j++) {
+                System.out.print(matriz[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    private void inOrderPrint(Node n, String[][] matriz, int[] colunaAtual) {
+        if (n == null) {
+            return;
+        }
+
+        if (isInternal(n)) {
+            if (this.hasLeft(n)) {
+                inOrderPrint(this.left(n), matriz, colunaAtual);
+            }
+        }
+
+        int linha = this.depth(n);
+        int coluna = colunaAtual[0]++;
+        matriz[linha][coluna] = n.getElemento().toString();
+
+        if (isInternal(n)) {
+            if (this.hasRight(n)) {
+                inOrderPrint(this.right(n), matriz, colunaAtual);
+            }
+        }
     }
 }

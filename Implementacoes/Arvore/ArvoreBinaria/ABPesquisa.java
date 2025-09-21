@@ -4,13 +4,13 @@ import Arvore.excecoes.InvalidPositionException;
 import Node.Node;
 
 public class ABPesquisa extends ABGenerica {
-    public ABPesquisa () {
+    public ABPesquisa() {
         super();
     }
 
-    public Node treeSearch (Node n, int o) {
+    public Node treeSearch(Node n, int o) {
         this.checkPosition(n);
-        
+
         int chave = this.key(n);
         if (o == chave) { // se o elemento for encontrado, retorna o nó que tem esse elemento
             return n;
@@ -23,11 +23,12 @@ public class ABPesquisa extends ABGenerica {
                 return treeSearch(n.getFilhoDireita(), o);
             }
         }
-        return n; // se o no que a gente ta nao tem filho, retorna o no que a gente ta, mesmo que nao tenha o valor procurado
+        return n; // se o no que a gente ta nao tem filho, retorna o no que a gente ta, mesmo que
+                  // nao tenha o valor procurado
 
     }
 
-    public Node insert (int o) {
+    public Node insert(int o) {
         if (this.isEmpty()) { // insere raiz
             this.tamanho = 1;
             this.raiz = new Node(String.valueOf(o));
@@ -69,12 +70,14 @@ public class ABPesquisa extends ABGenerica {
 
         if (left != null && right != null) { // tem 2 filhos
             Node successor = right; // primeiro pega-se o sucessor do nó que a gente tá (seu filho direito)
-            while (successor.getFilhoEsquerda() != null) { // vamos procurar o parente mais a esquerda desse sucessor (ele vai ser o elemento que vai ser o novo "meio")
+            while (successor.getFilhoEsquerda() != null) { // vamos procurar o parente mais a esquerda desse sucessor
+                                                           // (ele vai ser o elemento que vai ser o novo "meio")
                 successor = successor.getFilhoEsquerda();
             }
 
             Object elem = remove(this.key(successor)); // remove o elemento lá debaixo
-            position.setElemento(successor.getElemento()); // substitui o valor da posicao que estamos pelo valor substituido
+            position.setElemento(successor.getElemento()); // substitui o valor da posicao que estamos pelo valor
+                                                           // substituido
             return elem;
         }
 
@@ -109,7 +112,7 @@ public class ABPesquisa extends ABGenerica {
         return o;
     }
 
-    private int key(Node n) {
+    protected int key(Node n) {
         this.checkPosition(n);
         return Integer.parseInt((String) n.getElemento());
     }

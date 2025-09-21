@@ -11,10 +11,12 @@ public class Node {
     private Node filhoEsquerda;
     private Node filhoDireita;
     private int posicao;
+    private int FB;
 
-    public Node (Object o) {
+    public Node(Object o) {
         elemento = o;
         filhos = new ArrayList<>();
+        FB = 0;
     }
 
     public Object getElemento() {
@@ -83,5 +85,13 @@ public class Node {
 
     public int getPosicao() {
         return this.posicao;
+    }
+
+    public void setFB(int fb) {
+        this.FB = fb;
+    }
+
+    public int getFB() {
+        return this.FB;
     }
 }

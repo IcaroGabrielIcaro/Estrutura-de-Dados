@@ -1,5 +1,7 @@
 package Arvore.ArvoreBinaria;
 
+import java.util.Scanner;
+
 public class AVLTree {
     public class NodeAVL {
         public int value;
@@ -346,7 +348,7 @@ public class AVLTree {
             if (parent == grandParent.leftChild)
                 grandParent.leftChild = leftChild;
             else
-                grandParent.leftChild = leftChild;
+                grandParent.rightChild = leftChild;
         } else {
             this.root = leftChild;
         }
@@ -376,29 +378,104 @@ public class AVLTree {
         this.simpleRightRotation(parent, parent.leftChild);
     }
 
+    // int[] valoresInserir = { 8, 6, 20, 2, 7, 11, 29, 3, 10, 12, 24, 32, 9, 22, 31 };
+    // int[] valoresRemover = { 22, 31, 12, 7, 20 };
+
     public static void main(String[] args) {
         AVLTree tree = new AVLTree();
+        Scanner scanner = new Scanner(System.in);
 
-        System.out.println("=== Inserções ===");
-        int[] valoresInserir = { 8, 6, 20, 2, 7, 11, 29, 3, 10, 12, 24, 32, 9, 22, 31 };
-        for (int v : valoresInserir) {
-            System.out.println("Inserindo: " + v);
-            tree.insert(v);
-            tree.print();
-            System.out.println("------------------");
+        while (true) {
+            System.out.println("\n==== MENU AVL TREE ====");
+            System.out.println("1. Inserir valor");
+            System.out.println("2. Inserir vários valores");
+            System.out.println("3. Remover valor");
+            System.out.println("4. Remover vários valores");
+            System.out.println("5. Mostrar árvore");
+            System.out.println("6. Mostrar tamanho da árvore");
+            System.out.println("0. Sair");
+            System.out.print("Escolha uma opção: ");
+            String escolha = scanner.nextLine().trim();
+
+            switch (escolha) {
+                case "1":
+                    try {
+                        System.out.print("Digite um valor para inserir: ");
+                        int vInserir = Integer.parseInt(scanner.nextLine().trim());
+                        tree.insert(vInserir);
+                        System.out.println("Valor inserido.");
+                        tree.print();
+                    } catch (NumberFormatException e) {
+                        System.out.println("Erro: Entrada inválida. Digite um número inteiro.");
+                    } catch (Exception e) {
+                        System.out.println("Erro ao inserir: " + e.getMessage());
+                    }
+                    break;
+
+                case "2":
+                    try {
+                        System.out.print("Digite os valores separados por espaço: ");
+                        String[] inserirValores = scanner.nextLine().trim().split("\\s+");
+                        for (String val : inserirValores) {
+                            int v = Integer.parseInt(val);
+                            tree.insert(v);
+                            System.out.println("Inserido: " + v);
+                        }
+                        tree.print();
+                    } catch (NumberFormatException e) {
+                        System.out.println("Erro: Todos os valores devem ser números inteiros.");
+                    } catch (Exception e) {
+                        System.out.println("Erro ao inserir valores: " + e.getMessage());
+                    }
+                    break;
+
+                case "3":
+                    try {
+                        System.out.print("Digite um valor para remover: ");
+                        int vRemover = Integer.parseInt(scanner.nextLine().trim());
+                        tree.remove(vRemover);
+                        System.out.println("Valor removido.");
+                        tree.print();
+                    } catch (NumberFormatException e) {
+                        System.out.println("Erro: Entrada inválida. Digite um número inteiro.");
+                    } catch (Exception e) {
+                        System.out.println("Erro ao remover: " + e.getMessage());
+                    }
+                    break;
+
+                case "4":
+                    try {
+                        System.out.print("Digite os valores separados por espaço: ");
+                        String[] removerValores = scanner.nextLine().trim().split("\\s+");
+                        for (String val : removerValores) {
+                            int v = Integer.parseInt(val);
+                            tree.remove(v);
+                            System.out.println("Removido: " + v);
+                        }
+                        tree.print();
+                    } catch (NumberFormatException e) {
+                        System.out.println("Erro: Todos os valores devem ser números inteiros.");
+                    } catch (Exception e) {
+                        System.out.println("Erro ao remover valores: " + e.getMessage());
+                    }
+                    break;
+
+                case "5":
+                    tree.print();
+                    break;
+
+                case "6":
+                    System.out.println("Tamanho da árvore: " + tree.size());
+                    break;
+
+                case "0":
+                    System.out.println("Encerrando o programa.");
+                    scanner.close();
+                    return;
+
+                default:
+                    System.out.println("Opção inválida. Tente novamente.");
+            }
         }
-
-        System.out.println("Tamanho final da árvore: " + tree.size());
-
-        System.out.println("\n=== Remoções ===");
-        int[] valoresRemover = { 22, 31, 12, 7, 20 };
-        for (int v : valoresRemover) {
-            System.out.println("Removendo: " + v);
-            tree.remove(v);
-            tree.print();
-            System.out.println("------------------");
-        }
-
-        System.out.println("Tamanho final da árvore: " + tree.size());
     }
 }

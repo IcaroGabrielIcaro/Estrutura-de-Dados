@@ -109,6 +109,7 @@ public class AVLTree {
     }
 
     public void print() {
+        if (this.isEmpty()) throw new RuntimeException("A árvore está vazia");
         int rows = this.height(this.root) + 1;
         int columns = this.size();
         String[][] matrix = new String[rows][columns];
@@ -128,6 +129,7 @@ public class AVLTree {
                 System.out.print(String.format("%-10s", matrix[i][j]));
             }
             System.out.println();
+            System.out.println();
         }
     }
 
@@ -141,7 +143,7 @@ public class AVLTree {
 
         int row = this.depth(n);
         int column = atualColumn[0]++;
-        matrix[row][column] = String.format("%d(%d)", n.value, n.FB);
+        matrix[row][column] = String.format("%d[%d]", n.value, n.FB);
 
         if (this.isInternal(n)) {
             if (this.hasRight(n))
@@ -233,10 +235,11 @@ public class AVLTree {
                 parent.rightChild = child;
                 direction = 1;
             }
-            this.adjustRemotion(parent, direction);
-
+            
             if (child != null)
-                child.parent = parent;
+            child.parent = parent;
+
+            this.adjustRemotion(parent, direction);
         }
 
         this.size--;
@@ -274,12 +277,7 @@ public class AVLTree {
         n.FB = n.FB + direction;
 
         if (Math.abs(n.FB) == 2) {
-            NodeAVL parent = n.parent;
-            boolean isLeftChild = (parent.leftChild == n);
-
-            this.rebalance(n);
-
-            n = isLeftChild ? parent.leftChild : parent.rightChild;
+            n = this.rebalance(n);
         }
 
         if (n.FB != 0 || n == this.root)
@@ -292,7 +290,7 @@ public class AVLTree {
         }
     }
 
-    public void rebalance(NodeAVL n) {
+    public NodeAVL rebalance(NodeAVL n) {
         int value = n.FB;
 
         if (value == 2) {
@@ -300,23 +298,24 @@ public class AVLTree {
             NodeAVL left = n.leftChild;
 
             if (left.FB < 0) {
-                this.doubleRightRotation(n, left);
+                return this.doubleRightRotation(n, left);
             } else {
-                this.simpleRightRotation(n, left);
+                return this.simpleRightRotation(n, left);
             }
         } else if (value == -2) {
 
             NodeAVL right = n.rightChild;
 
             if (right.FB > 0) {
-                this.doubleLeftRotation(n, right);
+                return this.doubleLeftRotation(n, right);
             } else {
-                this.simpleLeftRotation(n, right);
+                return this.simpleLeftRotation(n, right);
             }
         }
+        return n;
     }
 
-    public void simpleLeftRotation(NodeAVL parent, NodeAVL rightChild) {
+    public NodeAVL simpleLeftRotation(NodeAVL parent, NodeAVL rightChild) {
         NodeAVL grandParent = parent.parent;
 
         if (grandParent != null) {
@@ -341,9 +340,11 @@ public class AVLTree {
 
         parent.FB = parent.FB + 1 - Math.min(rightChild.FB, 0);
         rightChild.FB = rightChild.FB + 1 + Math.max(parent.FB, 0);
+
+        return rightChild;
     }
 
-    public void simpleRightRotation(NodeAVL parent, NodeAVL leftChild) {
+    public NodeAVL simpleRightRotation(NodeAVL parent, NodeAVL leftChild) {
         NodeAVL grandParent = parent.parent;
 
         if (grandParent != null) {
@@ -368,16 +369,18 @@ public class AVLTree {
 
         parent.FB = parent.FB - 1 - Math.max(leftChild.FB, 0);
         leftChild.FB = leftChild.FB - 1 + Math.min(parent.FB, 0);
+
+        return leftChild;
     }
 
-    public void doubleLeftRotation(NodeAVL parent, NodeAVL rightChild) {
+    public NodeAVL doubleLeftRotation(NodeAVL parent, NodeAVL rightChild) {
         this.simpleRightRotation(rightChild, rightChild.leftChild);
-        this.simpleLeftRotation(parent, parent.rightChild);
+        return this.simpleLeftRotation(parent, parent.rightChild);
     }
 
-    public void doubleRightRotation(NodeAVL parent, NodeAVL leftChild) {
+    public NodeAVL doubleRightRotation(NodeAVL parent, NodeAVL leftChild) {
         this.simpleLeftRotation(leftChild, leftChild.rightChild);
-        this.simpleRightRotation(parent, parent.leftChild);
+        return this.simpleRightRotation(parent, parent.leftChild);
     }
 
     // int[] valoresInserir = { 8, 6, 20, 2, 7, 11, 29, 3, 10, 12, 24, 32, 9, 22, 31 };
@@ -438,7 +441,7 @@ public class AVLTree {
                         int vRemover = Integer.parseInt(scanner.nextLine().trim());
                         tree.remove(vRemover);
                         System.out.println("Valor removido.");
-                        tree.print();
+                        if (!tree.isEmpty()) tree.print();
                     } catch (NumberFormatException e) {
                         System.out.println("Erro: Entrada inválida. Digite um número inteiro.");
                     } catch (Exception e) {
@@ -454,8 +457,13 @@ public class AVLTree {
                             int v = Integer.parseInt(val);
                             tree.remove(v);
                             System.out.println("Removido: " + v);
+                            if (!tree.isEmpty()) {
+                                tree.print();
+                                System.out.println();
+                            }
                         }
-                        tree.print();
+                        if (!tree.isEmpty()) tree.print();
+                        else System.out.println("Árvore vazia");
                     } catch (NumberFormatException e) {
                         System.out.println("Erro: Todos os valores devem ser números inteiros.");
                     } catch (Exception e) {

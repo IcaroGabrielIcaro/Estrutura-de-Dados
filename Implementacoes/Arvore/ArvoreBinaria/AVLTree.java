@@ -125,7 +125,7 @@ public class AVLTree {
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                System.out.print(matrix[i][j] + " ");
+                System.out.print(String.format("%-10s", matrix[i][j]));
             }
             System.out.println();
         }
@@ -141,7 +141,7 @@ public class AVLTree {
 
         int row = this.depth(n);
         int column = atualColumn[0]++;
-        matrix[row][column] = Integer.toString(n.value);
+        matrix[row][column] = String.format("%d(%d)", n.value, n.FB);
 
         if (this.isInternal(n)) {
             if (this.hasRight(n))
@@ -225,13 +225,15 @@ public class AVLTree {
             NodeAVL parent = node.parent;
             boolean isLeftChild = (node == parent.leftChild);
 
+            int direction;
             if (isLeftChild) {
                 parent.leftChild = child;
-                this.adjustRemotion(parent, -1);
+                direction = -1;
             } else {
                 parent.rightChild = child;
-                this.adjustRemotion(parent, 1);
+                direction = 1;
             }
+            this.adjustRemotion(parent, direction);
 
             if (child != null)
                 child.parent = parent;
@@ -338,7 +340,7 @@ public class AVLTree {
         rightChild.parent = grandParent;
 
         parent.FB = parent.FB + 1 - Math.min(rightChild.FB, 0);
-        rightChild.FB = rightChild.FB + 1 - Math.max(parent.FB, 0);
+        rightChild.FB = rightChild.FB + 1 + Math.max(parent.FB, 0);
     }
 
     public void simpleRightRotation(NodeAVL parent, NodeAVL leftChild) {
@@ -420,8 +422,9 @@ public class AVLTree {
                             int v = Integer.parseInt(val);
                             tree.insert(v);
                             System.out.println("Inserido: " + v);
+                            tree.print();
+                            System.out.println();
                         }
-                        tree.print();
                     } catch (NumberFormatException e) {
                         System.out.println("Erro: Todos os valores devem ser números inteiros.");
                     } catch (Exception e) {
@@ -479,3 +482,6 @@ public class AVLTree {
         }
     }
 }
+
+// testar inserir 10 20 30 80 70 40
+//  remover 40 70 80 (erro no 80)

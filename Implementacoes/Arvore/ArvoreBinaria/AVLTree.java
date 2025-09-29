@@ -109,7 +109,8 @@ public class AVLTree {
     }
 
     public void print() {
-        if (this.isEmpty()) throw new RuntimeException("A árvore está vazia");
+        if (this.isEmpty())
+            throw new RuntimeException("A árvore está vazia");
         int rows = this.height(this.root) + 1;
         int columns = this.size();
         String[][] matrix = new String[rows][columns];
@@ -124,13 +125,23 @@ public class AVLTree {
 
         this.inOrderPrint(this.root, matrix, atualColumn);
 
+        int maxWidth = this.maxValueWidth(this.root) + 2; // +2 para espaçamento
+
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                System.out.print(String.format("%-10s", matrix[i][j]));
+                System.out.print(String.format("%-" + maxWidth + "s", matrix[i][j]));
             }
             System.out.println();
             System.out.println();
         }
+    }
+
+    private int maxValueWidth(NodeAVL node) {
+        if (node == null) return 0;
+        int currentWidth = String.valueOf(node.value).length();
+        int leftWidth = maxValueWidth(node.leftChild);
+        int rightWidth = maxValueWidth(node.rightChild);
+        return Math.max(currentWidth, Math.max(leftWidth, rightWidth));
     }
 
     private void inOrderPrint(NodeAVL n, String[][] matrix, int[] atualColumn) {
@@ -153,12 +164,17 @@ public class AVLTree {
 
     // Operações de Arvore Binaria de Pesquisa
 
-    public NodeAVL treeSearch(int value) {
-        NodeAVL actual = this.root;
-        if (actual == null)
-            return new NodeAVL(value);
+    public NodeAVL search(int value) {
+        NodeAVL node = this.treeSearch(value);
+        if (node == null || node.value != value)
+            throw new RuntimeException("Valor não encontrado na árvore");
+        return node;
+    }
 
-        while (actual.value != value) {
+    private NodeAVL treeSearch(int value) {
+        NodeAVL actual = this.root;
+
+        while (actual != null && actual.value != value) {
             if (value < actual.value) {
                 if (actual.leftChild == null)
                     break;
@@ -235,9 +251,9 @@ public class AVLTree {
                 parent.rightChild = child;
                 direction = 1;
             }
-            
+
             if (child != null)
-            child.parent = parent;
+                child.parent = parent;
 
             this.adjustRemotion(parent, direction);
         }
@@ -383,9 +399,6 @@ public class AVLTree {
         return this.simpleRightRotation(parent, parent.leftChild);
     }
 
-    // int[] valoresInserir = { 8, 6, 20, 2, 7, 11, 29, 3, 10, 12, 24, 32, 9, 22, 31 };
-    // int[] valoresRemover = { 22, 31, 12, 7, 20 };
-
     public static void main(String[] args) {
         AVLTree tree = new AVLTree();
         Scanner scanner = new Scanner(System.in);
@@ -398,6 +411,7 @@ public class AVLTree {
             System.out.println("4. Remover vários valores");
             System.out.println("5. Mostrar árvore");
             System.out.println("6. Mostrar tamanho da árvore");
+            System.out.println("7. Buscar valor");
             System.out.println("0. Sair");
             System.out.print("Escolha uma opção: ");
             String escolha = scanner.nextLine().trim();
@@ -441,7 +455,8 @@ public class AVLTree {
                         int vRemover = Integer.parseInt(scanner.nextLine().trim());
                         tree.remove(vRemover);
                         System.out.println("Valor removido.");
-                        if (!tree.isEmpty()) tree.print();
+                        if (!tree.isEmpty())
+                            tree.print();
                     } catch (NumberFormatException e) {
                         System.out.println("Erro: Entrada inválida. Digite um número inteiro.");
                     } catch (Exception e) {
@@ -462,8 +477,10 @@ public class AVLTree {
                                 System.out.println();
                             }
                         }
-                        if (!tree.isEmpty()) tree.print();
-                        else System.out.println("Árvore vazia");
+                        if (!tree.isEmpty())
+                            tree.print();
+                        else
+                            System.out.println("Árvore vazia");
                     } catch (NumberFormatException e) {
                         System.out.println("Erro: Todos os valores devem ser números inteiros.");
                     } catch (Exception e) {
@@ -472,11 +489,32 @@ public class AVLTree {
                     break;
 
                 case "5":
-                    tree.print();
+                    try {
+                        tree.print();
+                    } catch (Exception e) {
+                        System.out.println("Erro ao mostrar árvore: " + e.getMessage());
+                    }
                     break;
 
                 case "6":
-                    System.out.println("Tamanho da árvore: " + tree.size());
+                    try {
+                        System.out.println("Tamanho da árvore: " + tree.size());
+                    } catch (Exception e) {
+                        System.out.println("Erro ao mostrar tamanho: " + e.getMessage());
+                    }
+                    break;
+
+                case "7":
+                    try {
+                        System.out.print("Digite um valor para buscar: ");
+                        int vBuscar = Integer.parseInt(scanner.nextLine().trim());
+                        NodeAVL resultado = tree.search(vBuscar);
+                        System.out.println("Valor encontrado: " + resultado.value);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Erro: Entrada inválida. Digite um número inteiro.");
+                    } catch (Exception e) {
+                        System.out.println("Erro ao buscar: " + e.getMessage());
+                    }
                     break;
 
                 case "0":
@@ -490,6 +528,3 @@ public class AVLTree {
         }
     }
 }
-
-// testar inserir 10 20 30 80 70 40
-//  remover 40 70 80 (erro no 80)

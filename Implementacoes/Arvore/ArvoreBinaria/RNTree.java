@@ -40,22 +40,18 @@ public class RNTree {
     }
 
     public NodeRN root() {
-        if (this.root == null)
-            throw new RuntimeException("A árvore está vazia");
+        if (this.root == null) throw new RuntimeException("A árvore está vazia");
         return this.root;
     }
 
     private NodeRN checkPosition(NodeRN n) {
-        if (n == null || !(n instanceof NodeRN))
-            throw new RuntimeException("A posição é invalida");
+        if (n == null || !(n instanceof NodeRN)) throw new RuntimeException("A posição é invalida");
         return n;
     }
 
     public int depth(NodeRN n) {
-        if (this.isRoot(n))
-            return 0;
-        else
-            return 1 + this.depth(n.parent);
+        if (this.isRoot(n)) return 0;
+        else return 1 + this.depth(n.parent);
     }
 
     // Operações de Arvore Binaria Generica
@@ -83,34 +79,28 @@ public class RNTree {
     public NodeRN left(NodeRN n) {
         this.checkPosition(n);
         NodeRN left = n.leftChild;
-        if (left == null)
-            throw new RuntimeException("Sem filho esquerdo");
+        if (left == null) throw new RuntimeException("Sem filho esquerdo");
         return left;
     }
 
     public NodeRN right(NodeRN n) {
         this.checkPosition(n);
         NodeRN right = n.rightChild;
-        if (right == null)
-            throw new RuntimeException("Sem filho direito");
+        if (right == null) throw new RuntimeException("Sem filho direito");
         return right;
     }
 
     public int height(NodeRN n) {
-        if (this.isExternal(n))
-            return 0;
+        if (this.isExternal(n)) return 0;
 
         int hmax = 0;
-        if (this.hasLeft(n))
-            hmax = Math.max(hmax, this.height(n.leftChild));
-        if (this.hasRight(n))
-            hmax = Math.max(hmax, this.height(n.rightChild));
+        if (this.hasLeft(n)) hmax = Math.max(hmax, this.height(n.leftChild));
+        if (this.hasRight(n)) hmax = Math.max(hmax, this.height(n.rightChild));
         return 1 + hmax;
     }
 
     public void print() {
-        if (this.isEmpty())
-            throw new RuntimeException("A árvore está vazia");
+        if (this.isEmpty()) throw new RuntimeException("A árvore está vazia");
 
         int rows = this.height(this.root) + 1;
         int columns = (int) Math.pow(2, rows) - 1; // largura máxima
@@ -134,8 +124,7 @@ public class RNTree {
     }
 
     private void fillMatrix(String[][] matrix, NodeRN node, int row, int left, int right) {
-        if (node == null || row >= matrix.length)
-            return;
+        if (node == null || row >= matrix.length) return;
 
         int mid = (left + right) / 2;
 
@@ -154,8 +143,7 @@ public class RNTree {
 
     public NodeRN search(int value) {
         NodeRN node = this.treeSearch(value);
-        if (node == null || node.value != value)
-            throw new RuntimeException("Valor não encontrado na árvore");
+        if (node == null || node.value != value) throw new RuntimeException("Valor não encontrado na árvore");
         return node;
     }
 
@@ -164,12 +152,10 @@ public class RNTree {
 
         while (actual != null && actual.value != value) {
             if (value < actual.value) {
-                if (actual.leftChild == null)
-                    break;
+                if (actual.leftChild == null) break;
                 actual = actual.leftChild;
             } else {
-                if (actual.rightChild == null)
-                    break;
+                if (actual.rightChild == null) break;
                 actual = actual.rightChild;
             }
         }
@@ -185,100 +171,47 @@ public class RNTree {
         }
 
         NodeRN node = this.treeSearch(o);
-        if (node.value == o)
-            throw new RuntimeException("Esse elemento já foi inserido");
+        if (node.value == o) throw new RuntimeException("Esse elemento já foi inserido");
 
         NodeRN newNode = new NodeRN(o);
         newNode.parent = node;
 
-        if (o < node.value)
-            node.leftChild = newNode;
-        else
-            node.rightChild = newNode;
+        if (o < node.value) node.leftChild = newNode;
+        else node.rightChild = newNode;
 
         this.size++;
         this.adjustTreeInsertion(newNode);
         return newNode;
     }
 
-    // public int remove(int o) {
-    // if (this.isEmpty())
-    // throw new RuntimeException("A árvore está vazia");
-
-    // NodeRN node = this.treeSearch(o);
-    // if (node == null || node.value != o)
-    // throw new RuntimeException("Elemento não encontrado");
-
-    // NodeRN left = node.leftChild;
-    // NodeRN right = node.rightChild;
-
-    // if (left != null && right != null) {
-    // NodeRN inOrderSuccessor = right;
-    // while (inOrderSuccessor.leftChild != null)
-    // inOrderSuccessor = inOrderSuccessor.leftChild;
-
-    // int removed = this.remove(inOrderSuccessor.value);
-    // node.value = inOrderSuccessor.value;
-    // return removed;
-    // }
-
-    // NodeRN child = (left != null) ? left : right;
-    // NodeRN removed = node;
-
-    // if (node == this.root) {
-    // this.root = child;
-    // if (child != null)
-    // child.parent = null;
-    // } else {
-    // NodeRN parent = node.parent;
-    // boolean isLeftChild = (node == parent.leftChild);
-
-    // if (isLeftChild) {
-    // parent.leftChild = child;
-    // } else {
-    // parent.rightChild = child;
-    // }
-
-    // if (child != null)
-    // child.parent = parent;
-
-    // System.out.print(node.value + " " + parent.value);
-    // if (child != null) {
-    // System.out.println(" " + child.value);
-    // }
-    // this.adjustTreeRemotion(removed, child);
-    // }
-
-    // this.size--;
-    // return o;
-    // }
-
     public int remove(int o) {
-        if (this.isEmpty())
-            throw new RuntimeException("A árvore está vazia");
+        if (this.isEmpty()) throw new RuntimeException("A árvore está vazia");
 
         NodeRN node = this.treeSearch(o);
-        if (node == null || node.value != o)
-            throw new RuntimeException("Elemento não encontrado");
+        if (node == null || node.value != o) throw new RuntimeException("Elemento não encontrado");
 
         this.recursiveRemotion(node);
+        this.size--;
         return o;
     }
 
     public void recursiveRemotion(NodeRN node) {
-        NodeRN inOrderSuccessor;
+        NodeRN substitute;
         if (node.rightChild != null) {
-            inOrderSuccessor = node.rightChild;
-            while (inOrderSuccessor.leftChild != null)
-            inOrderSuccessor = inOrderSuccessor.leftChild;
-        } else inOrderSuccessor = node;
+            substitute = node.rightChild;
+            while (substitute.leftChild != null) substitute = substitute.leftChild;
+        } else if (node.leftChild != null) substitute = node.leftChild;
+        else substitute = node;
         
-        if (inOrderSuccessor.value != node.value) {
-            node.value = inOrderSuccessor.value;
-            this.recursiveRemotion(inOrderSuccessor);
+        if (substitute.value != node.value) {
+            node.value = substitute.value;
+            this.recursiveRemotion(substitute);
         } else {
+            if (this.isRoot(substitute)) {
+                this.root = null;
+                return;
+            }
             if (node.isBlack) this.adjustTreeRemotion(node);
-            System.out.println(node.value + " ");
             NodeRN parent = node.parent;
             if (node == parent.leftChild) parent.leftChild = null;
             else parent.rightChild = null;
@@ -292,13 +225,9 @@ public class RNTree {
         NodeRN grandParent = parent.parent;
 
         if (grandParent != null) {
-            if (parent == grandParent.leftChild)
-                grandParent.leftChild = rightChild;
-            else
-                grandParent.rightChild = rightChild;
-        } else {
-            this.root = rightChild;
-        }
+            if (parent == grandParent.leftChild) grandParent.leftChild = rightChild;
+            else grandParent.rightChild = rightChild;
+        } else this.root = rightChild;
 
         NodeRN middleSubtree = rightChild.leftChild;
 
@@ -306,8 +235,7 @@ public class RNTree {
         parent.parent = rightChild;
         parent.rightChild = middleSubtree;
 
-        if (middleSubtree != null)
-            middleSubtree.parent = parent;
+        if (middleSubtree != null) middleSubtree.parent = parent;
 
         rightChild.parent = grandParent;
 
@@ -318,13 +246,9 @@ public class RNTree {
         NodeRN grandParent = parent.parent;
 
         if (grandParent != null) {
-            if (parent == grandParent.leftChild)
-                grandParent.leftChild = leftChild;
-            else
-                grandParent.rightChild = leftChild;
-        } else {
-            this.root = leftChild;
-        }
+            if (parent == grandParent.leftChild) grandParent.leftChild = leftChild;
+            else grandParent.rightChild = leftChild;
+        } else this.root = leftChild;
 
         NodeRN middleSubtree = leftChild.rightChild;
 
@@ -332,8 +256,7 @@ public class RNTree {
         parent.parent = leftChild;
         parent.leftChild = middleSubtree;
 
-        if (middleSubtree != null)
-            middleSubtree.parent = parent;
+        if (middleSubtree != null) middleSubtree.parent = parent;
 
         leftChild.parent = grandParent;
 
@@ -354,12 +277,10 @@ public class RNTree {
 
     private void adjustTreeInsertion(NodeRN actual) {
         NodeRN parent = actual.parent;
-        if (parent == null || parent.isBlack)
-            return;
+        if (parent == null || parent.isBlack) return;
 
         NodeRN grandParent = parent.parent;
-        if (grandParent == null)
-            return;
+        if (grandParent == null) return;
 
         NodeRN uncle = (grandParent.leftChild == parent) ? grandParent.rightChild : grandParent.leftChild;
         boolean uncleRed = (uncle != null && !uncle.isBlack);
@@ -369,10 +290,8 @@ public class RNTree {
             uncle.isBlack = true;
             grandParent.isBlack = false;
 
-            if (grandParent == this.root)
-                grandParent.isBlack = true;
-            else
-                this.adjustTreeInsertion(grandParent);
+            if (grandParent == this.root) grandParent.isBlack = true;
+            else this.adjustTreeInsertion(grandParent);
             return;
         }
 
@@ -405,56 +324,57 @@ public class RNTree {
         NodeRN parent = actual.parent;
         if (parent == null) return;
 
-        NodeRN brother = (actual == parent.leftChild) ? parent.rightChild : parent.leftChild;
-        NodeRN distantNephew = null;
-        NodeRN closeNephew = null;
-        if (brother != null) {
-            distantNephew = (brother == parent.leftChild) ? brother.leftChild : brother.rightChild;
-            closeNephew = (brother == parent.leftChild) ? brother.rightChild : brother.leftChild;
-        }
+        NodeRN brother = getBrother(parent, actual);
+        NodeRN distantNephew = getDistantNephew(parent, brother);
+        NodeRN closeNephew = getCloseNephew(parent, brother);
 
         if (brother != null && !brother.isBlack) {
-            this.case1(parent, brother);
-            brother = (actual == parent.leftChild) ? parent.rightChild : parent.leftChild;
-            if (brother != null) {
-                distantNephew = (brother == parent.leftChild) ? brother.leftChild : brother.rightChild;
-                closeNephew = (brother == parent.leftChild) ? brother.rightChild : brother.leftChild;
-            } else {
-                distantNephew = null;
-                closeNephew = null;
-            }
-        } 
-        
+            case1(parent, brother);
+            brother = getBrother(parent, actual);
+            distantNephew = getDistantNephew(parent, brother);
+            closeNephew = getCloseNephew(parent, brother);
+        }
+
         if (distantNephew != null && !distantNephew.isBlack) {
-            this.case4(parent, brother, distantNephew);
-            return;
-        } 
-        
-        if (closeNephew != null && !closeNephew.isBlack) {
-            this.case3(brother, closeNephew);
-            brother = (actual == parent.leftChild) ? parent.rightChild : parent.leftChild;
-            distantNephew = (brother == parent.leftChild) ? brother.leftChild : brother.rightChild;
-            this.case4(parent, brother, distantNephew);
-            return;
-        } 
-        
-        if (!parent.isBlack) {
-            this.case2b(parent, brother);
+            case4(parent, brother, distantNephew);
             return;
         }
 
-        this.case2a(brother);
-        actual = parent;
-        this.adjustTreeRemotion(actual);
+        if (closeNephew != null && !closeNephew.isBlack) {
+            case3(brother, closeNephew);
+            brother = getBrother(parent, actual);
+            distantNephew = getDistantNephew(parent, brother);
+            case4(parent, brother, distantNephew);
+            return;
+        }
 
+        if (!parent.isBlack) {
+            case2b(parent, brother);
+        } 
+        
+        else {
+            case2a(brother);
+            adjustTreeRemotion(parent);
+        }
+    }
+
+    private NodeRN getBrother(NodeRN parent, NodeRN child) {
+        return (child == parent.leftChild) ? parent.rightChild : parent.leftChild;
+    }
+
+    private NodeRN getDistantNephew(NodeRN parent, NodeRN brother) {
+        if (brother == null) return null;
+        return (brother == parent.leftChild) ? brother.leftChild : brother.rightChild;
+    }
+
+    private NodeRN getCloseNephew(NodeRN parent, NodeRN brother) {
+        if (brother == null) return null;
+        return (brother == parent.leftChild) ? brother.rightChild : brother.leftChild;
     }
 
     public void case1(NodeRN parent, NodeRN brother) {
-        if (brother == parent.leftChild) {
-            this.simpleRightRotation(parent, brother);
-        } else {
-            this.simpleLeftRotation(parent, brother);
-        }
+        if (brother == parent.leftChild) this.simpleRightRotation(parent, brother);
+        else this.simpleLeftRotation(parent, brother);
         parent.isBlack = false;
         brother.isBlack = true;
     }
@@ -469,21 +389,15 @@ public class RNTree {
     }
 
     public void case3(NodeRN brother, NodeRN closeNephew) {
-        if (closeNephew == brother.leftChild) {
-            this.simpleRightRotation(brother, closeNephew);
-        } else {
-            this.simpleLeftRotation(brother, closeNephew);
-        }
+        if (closeNephew == brother.leftChild) this.simpleRightRotation(brother, closeNephew);
+        else this.simpleLeftRotation(brother, closeNephew);
         brother.isBlack = false;
         closeNephew.isBlack = true;
     }
 
     public void case4(NodeRN parent, NodeRN brother, NodeRN distantNephew) {
-        if (brother == parent.leftChild) {
-            this.simpleRightRotation(parent, brother);
-        } else {
-            this.simpleLeftRotation(parent, brother);
-        }
+        if (brother == parent.leftChild) this.simpleRightRotation(parent, brother);
+        else this.simpleLeftRotation(parent, brother);
         brother.isBlack = parent.isBlack;
         parent.isBlack = true;
         distantNephew.isBlack = true;

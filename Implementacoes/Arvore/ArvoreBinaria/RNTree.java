@@ -2,8 +2,6 @@ package Arvore.ArvoreBinaria;
 
 import java.util.Scanner;
 
-import Arvore.ArvoreBinaria.AVLTree.NodeAVL;
-
 public class RNTree {
     public class NodeRN {
         public int value;
@@ -268,18 +266,22 @@ public class RNTree {
     }
 
     public void recursiveRemotion(NodeRN node) {
-        NodeRN inOrderSuccessor = node.rightChild;
-        while (inOrderSuccessor.leftChild != null)
+        NodeRN inOrderSuccessor;
+        if (node.rightChild != null) {
+            inOrderSuccessor = node.rightChild;
+            while (inOrderSuccessor.leftChild != null)
             inOrderSuccessor = inOrderSuccessor.leftChild;
-
-        if (inOrderSuccessor != null) {
+        } else inOrderSuccessor = node;
+        
+        if (inOrderSuccessor.value != node.value) {
             node.value = inOrderSuccessor.value;
             this.recursiveRemotion(inOrderSuccessor);
         } else {
-            if (node.isBlack)
-                // this.adjustTreeRemotion(node, inOrderSuccessor);
+            if (node.isBlack) this.adjustTreeRemotion(node);
+            System.out.println(node.value + " ");
             NodeRN parent = node.parent;
-            parent.rightChild = null;
+            if (node == parent.leftChild) parent.leftChild = null;
+            else parent.rightChild = null;
             return;
         }
     }
@@ -399,49 +401,55 @@ public class RNTree {
         throw new RuntimeException("Estado inválido em adjustTree");
     }
 
-    public void adjustTreeRemotion(NodeRN removed, NodeRN successor) {
-        System.out.println(removed.value + " " + successor.value);
-        if (!removed.isBlack && !successor.isBlack) {
-            System.out.println("aqui");
-            return;
+    public void adjustTreeRemotion(NodeRN actual) {
+        NodeRN parent = actual.parent;
+        if (parent == null) return;
+
+        NodeRN brother = (actual == parent.leftChild) ? parent.rightChild : parent.leftChild;
+        NodeRN distantNephew = null;
+        NodeRN closeNephew = null;
+        if (brother != null) {
+            distantNephew = (brother == parent.leftChild) ? brother.leftChild : brother.rightChild;
+            closeNephew = (brother == parent.leftChild) ? brother.rightChild : brother.leftChild;
         }
 
-        if (removed.isBlack && !successor.isBlack) {
-            this.case2(successor);
-            return;
-        }
-
-        if (removed.isBlack && successor.isBlack) {
-            NodeRN parent = successor.parent;
-            NodeRN brother = (parent.leftChild == successor) ? parent.rightChild : parent.leftChild;
-            NodeRN leftNephew = brother.leftChild;
-            NodeRN rightNephew = brother.rightChild;
-
-            if (!brother.isBlack && parent.isBlack) {
-                this.case31(parent, brother);
-            } else if (parent.isBlack && brother.isBlack && leftNephew.isBlack && rightNephew.isBlack) {
-                this.case32a(parent, brother);
-            } else if (!parent.isBlack && brother.isBlack && leftNephew.isBlack && rightNephew.isBlack) {
-                this.case32b(parent, brother);
-            } else if (brother.isBlack && !leftNephew.isBlack && rightNephew.isBlack) {
-                this.case33(parent, brother, leftNephew, rightNephew);
-            } else if (brother.isBlack && !rightNephew.isBlack) {
-                this.case34(parent, brother, leftNephew, rightNephew);
+        if (brother != null && !brother.isBlack) {
+            this.case1(parent, brother);
+            brother = (actual == parent.leftChild) ? parent.rightChild : parent.leftChild;
+            if (brother != null) {
+                distantNephew = (brother == parent.leftChild) ? brother.leftChild : brother.rightChild;
+                closeNephew = (brother == parent.leftChild) ? brother.rightChild : brother.leftChild;
             } else {
-                throw new RuntimeException("Estado inválido na remoção da RBT");
+                distantNephew = null;
+                closeNephew = null;
             }
+        } 
+        
+        if (distantNephew != null && !distantNephew.isBlack) {
+            this.case4(parent, brother, distantNephew);
+            return;
+        } 
+        
+        if (closeNephew != null && !closeNephew.isBlack) {
+            this.case3(brother, closeNephew);
+            brother = (actual == parent.leftChild) ? parent.rightChild : parent.leftChild;
+            distantNephew = (brother == parent.leftChild) ? brother.leftChild : brother.rightChild;
+            this.case4(parent, brother, distantNephew);
+            return;
+        } 
+        
+        if (!parent.isBlack) {
+            this.case2b(parent, brother);
+            return;
         }
 
-        if (!removed.isBlack && successor.isBlack) {
-            this.case4(successor);
-        }
+        this.case2a(brother);
+        actual = parent;
+        this.adjustTreeRemotion(actual);
+
     }
 
-    private void case2(NodeRN successor) {
-        successor.isBlack = true;
-    }
-
-    private void case31(NodeRN parent, NodeRN brother) {
+    public void case1(NodeRN parent, NodeRN brother) {
         if (brother == parent.leftChild) {
             this.simpleRightRotation(parent, brother);
         } else {
@@ -449,48 +457,36 @@ public class RNTree {
         }
         parent.isBlack = false;
         brother.isBlack = true;
-        this.adjustTreeRemotion(parent, parent);
     }
 
-    private void case32a(NodeRN parent, NodeRN brother) {
+    public void case2a(NodeRN brother) {
         brother.isBlack = false;
-        if (parent != root)
-            this.adjustTreeRemotion(parent, parent);
     }
 
-    private void case32b(NodeRN parent, NodeRN brother) {
+    public void case2b(NodeRN parent, NodeRN brother) {
         parent.isBlack = true;
-        brother.isBlack = false;
+        if (brother != null) brother.isBlack = false;
     }
 
-    private void case33(NodeRN parent, NodeRN brother, NodeRN leftNephew, NodeRN rightNephew) {
-        if (brother == parent.leftChild) {
-            this.simpleRightRotation(brother, leftNephew);
-            leftNephew.isBlack = true;
+    public void case3(NodeRN brother, NodeRN closeNephew) {
+        if (closeNephew == brother.leftChild) {
+            this.simpleRightRotation(brother, closeNephew);
         } else {
-            this.simpleLeftRotation(brother, rightNephew);
-            rightNephew.isBlack = true;
+            this.simpleLeftRotation(brother, closeNephew);
         }
         brother.isBlack = false;
-        this.case34(parent, brother, leftNephew, rightNephew);
+        closeNephew.isBlack = true;
     }
 
-    private void case34(NodeRN parent, NodeRN brother, NodeRN leftNephew, NodeRN rightNephew) {
+    public void case4(NodeRN parent, NodeRN brother, NodeRN distantNephew) {
         if (brother == parent.leftChild) {
             this.simpleRightRotation(parent, brother);
-            if (rightNephew != null)
-                rightNephew.isBlack = true;
         } else {
             this.simpleLeftRotation(parent, brother);
-            if (leftNephew != null)
-                leftNephew.isBlack = true;
         }
         brother.isBlack = parent.isBlack;
         parent.isBlack = true;
-    }
-
-    private void case4(NodeRN successor) {
-        successor.isBlack = false;
+        distantNephew.isBlack = true;
     }
 
     public static void main(String[] args) {

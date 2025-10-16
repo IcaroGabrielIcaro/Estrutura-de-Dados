@@ -26,29 +26,29 @@ public class RNTree {
 
     // Operações de Arvore Generica
 
+    // Resgatar tamanho da árvore
     public int size() {
         return this.size;
     }
 
+    // Resgata se a árvore está vazia
     public boolean isEmpty() {
         return this.size() == 0;
     }
 
+    // Resgata se Nó n é o raiz
     public boolean isRoot(NodeRN n) {
-        this.checkPosition(n);
+        if (n == null) throw new RuntimeException("Nó n é nulo");
         return n == this.root();
     }
 
+    // Resgata o raiz da árvore
     public NodeRN root() {
         if (this.root == null) throw new RuntimeException("A árvore está vazia");
         return this.root;
     }
 
-    private NodeRN checkPosition(NodeRN n) {
-        if (n == null || !(n instanceof NodeRN)) throw new RuntimeException("A posição é invalida");
-        return n;
-    }
-
+    // Resgata a profundidade do Nó n passado
     public int depth(NodeRN n) {
         if (this.isRoot(n)) return 0;
         else return 1 + this.depth(n.parent);
@@ -56,40 +56,47 @@ public class RNTree {
 
     // Operações de Arvore Binaria Generica
 
+    // Resgata se o Nó n é um nó interno
     public boolean isInternal(NodeRN n) {
-        this.checkPosition(n);
+        if (n == null) throw new RuntimeException("Nó n é nulo");
         return (this.hasLeft(n) || this.hasRight(n));
     }
 
+    // Resgata se o Nó n é um nó externo
     public boolean isExternal(NodeRN n) {
-        this.checkPosition(n);
+        if (n == null) throw new RuntimeException("Nó n é nulo");
         return (!this.hasLeft(n) && !this.hasRight(n));
     }
 
+    // Resgata se o Nó n tem um filho esquerdo
     public boolean hasLeft(NodeRN n) {
-        this.checkPosition(n);
+        if (n == null) throw new RuntimeException("Nó n é nulo");
         return (n.leftChild != null);
     }
 
+    // Resgata se o Nó n tem um filho direito
     public boolean hasRight(NodeRN n) {
-        this.checkPosition(n);
+        if (n == null) throw new RuntimeException("Nó n é nulo");
         return (n.rightChild != null);
     }
 
+    // Resgata o filho esquerdo do Nó n
     public NodeRN left(NodeRN n) {
-        this.checkPosition(n);
+        if (n == null) throw new RuntimeException("Nó n é nulo");
         NodeRN left = n.leftChild;
         if (left == null) throw new RuntimeException("Sem filho esquerdo");
         return left;
     }
 
+    // Resgata o filho direito do Nó n
     public NodeRN right(NodeRN n) {
-        this.checkPosition(n);
+        if (n == null) throw new RuntimeException("Nó n é nulo");
         NodeRN right = n.rightChild;
         if (right == null) throw new RuntimeException("Sem filho direito");
         return right;
     }
 
+    // Resgata a altura do Nó n passado
     public int height(NodeRN n) {
         if (this.isExternal(n)) return 0;
 
@@ -99,6 +106,7 @@ public class RNTree {
         return 1 + hmax;
     }
 
+    // Print da árvore
     public void print() {
         if (this.isEmpty()) throw new RuntimeException("A árvore está vazia");
 
@@ -141,79 +149,83 @@ public class RNTree {
 
     // Operações de Arvore Binaria de Pesquisa
 
+    // Resgata Nó com o valor passado
     public NodeRN search(int value) {
         NodeRN node = this.treeSearch(value);
         if (node == null || node.value != value) throw new RuntimeException("Valor não encontrado na árvore");
         return node;
     }
 
+    // Método de busca iterativa do valor
     private NodeRN treeSearch(int value) {
-        NodeRN actual = this.root;
+        NodeRN actual = this.root; // Nó atual é o raiz
 
-        while (actual != null && actual.value != value) {
-            if (value < actual.value) {
-                if (actual.leftChild == null) break;
-                actual = actual.leftChild;
-            } else {
-                if (actual.rightChild == null) break;
-                actual = actual.rightChild;
+        while (actual != null && actual.value != value) { // Enquanto o nó que estamos tiver um valor diferente do valor buscado (ou seja diferente de nulo)
+            if (value < actual.value) { // Se o valor do Nó é menor que o valor buscado 
+                if (actual.leftChild == null) break; // Se não tiver o filho da esquerda, para
+                actual = actual.leftChild; // Atual é o filho da esquerda
+            } else { // Se o Nó é maior que o valor buscado
+                if (actual.rightChild == null) break; // Se não tiver o filho da direita, para
+                actual = actual.rightChild; // Atual é o filho da direita
             }
         }
         return actual;
     }
 
+    // Método de inserção de um valor na árvore
     public NodeRN insert(int o) {
-        if (this.isEmpty()) {
+        if (this.isEmpty()) { // Se a árvore estiver vazia, insere no raiz
             this.size = 1;
             this.root = new NodeRN(o);
             this.root.isBlack = true;
             return this.root;
         }
 
-        NodeRN node = this.treeSearch(o);
-        if (node.value == o) throw new RuntimeException("Esse elemento já foi inserido");
+        NodeRN node = this.treeSearch(o); // Busca o nó que vai ser inserido o novo filho dele
+        if (node.value == o) throw new RuntimeException("Esse elemento já foi inserido"); // Se o Nó tiver o valor que já foi inserido (não pode)
 
-        NodeRN newNode = new NodeRN(o);
-        newNode.parent = node;
+        NodeRN newNode = new NodeRN(o); // Cria novo nó
+        newNode.parent = node; // Seta o pai do novo como o Nó que foi achado da busca
 
-        if (o < node.value) node.leftChild = newNode;
-        else node.rightChild = newNode;
+        if (o < node.value) node.leftChild = newNode; // Se o valor do Nó achado da busca for maior que o valor inserido, insere no filho da esquerda
+        else node.rightChild = newNode; // Se o valor do Nó achado da busca for menor que o valor inserido, insere um filho da direita
 
         this.size++;
-        this.adjustTreeInsertion(newNode);
+        this.adjustTreeInsertion(newNode); // Ajuda cores
         return newNode;
     }
 
+    // Método de remoção de um valor da árvore
     public int remove(int o) {
         if (this.isEmpty()) throw new RuntimeException("A árvore está vazia");
 
-        NodeRN node = this.treeSearch(o);
+        NodeRN node = this.treeSearch(o); // Busca o nó do valor a ser removido
         if (node == null || node.value != o) throw new RuntimeException("Elemento não encontrado");
 
-        this.recursiveRemotion(node);
+        this.recursiveRemotion(node); // Chama recursivamente para remover o nó encontrado
         this.size--;
         return o;
     }
 
     public void recursiveRemotion(NodeRN node) {
-        NodeRN substitute;
-        if (node.rightChild != null) {
-            substitute = node.rightChild;
-            while (substitute.leftChild != null) substitute = substitute.leftChild;
-        } else if (node.leftChild != null) substitute = node.leftChild;
-        else substitute = node;
+        NodeRN substitute; // Identificação do nó que vai substituir o nó a ser removido (em busca do sucessor)
+        if (node.rightChild != null) { // Se o filho da direita dele não for nulo (tem sucessor)
+            substitute = node.rightChild; // Busca o sucessor, seja o direito direto
+            while (substitute.leftChild != null) substitute = substitute.leftChild; // Busca o sucessor do filho direito direto do no a ser removido
+        } else if (node.leftChild != null) substitute = node.leftChild; // Se não tiver filho da direita e tiver o filho da esquerda (pega o antecessor)
+        else substitute = node; // Se não tiver filhos, o substituto vai ser o próprio nó (vai garantir o caso base)
         
-        if (substitute.value != node.value) {
-            node.value = substitute.value;
-            this.recursiveRemotion(substitute);
-        } else {
-            if (this.isRoot(substitute)) {
+        if (substitute.value != node.value) { // Se o valor do substituto for diferente do valor a ser removido
+            node.value = substitute.value; // Troca o valor do removido para o do substituto
+            this.recursiveRemotion(substitute); // Remove fisicamente o substituto
+        } else { // Se o valor do substituto for igual ao valor a ser removido (caso base)
+            if (this.isRoot(substitute)) { // Confere se o cara que vamos remover é o raiz, se for apenas remove
                 this.root = null;
                 return;
             }
-            if (node.isBlack) this.adjustTreeRemotion(node);
-            NodeRN parent = node.parent;
-            if (node == parent.leftChild) parent.leftChild = null;
+            if (node.isBlack) this.adjustTreeRemotion(node); // Se o nó a ser removido for PRETO, vai ajustar as cores (VERMELHO SÓ REMOVE)
+            NodeRN parent = node.parent; // Resgata o pai
+            if (node == parent.leftChild) parent.leftChild = null; // Confere de qual lado lado é o nó a ser removido e COMO É O CASO BASE so informa que é nulo
             else parent.rightChild = null;
             return;
         }
@@ -221,56 +233,62 @@ public class RNTree {
 
     // Operações de Arvore AVL
 
+    // Método de rotação simples para a esquerda e retorna o raiz da subárvore (pai não vai ser mais raiz e seu filho direito que vai ser)
     public NodeRN simpleLeftRotation(NodeRN parent, NodeRN rightChild) {
-        NodeRN grandParent = parent.parent;
+        NodeRN grandParent = parent.parent; // Resgata o avô
 
-        if (grandParent != null) {
-            if (parent == grandParent.leftChild) grandParent.leftChild = rightChild;
-            else grandParent.rightChild = rightChild;
-        } else this.root = rightChild;
+        if (grandParent != null) { // Se existir avô
+            if (parent == grandParent.leftChild) grandParent.leftChild = rightChild; // Se o pai for o filho da esquerda do avô, troca para o filho da esquerda do avô ser o filho da direita do pai
+            else grandParent.rightChild = rightChild; // Se o pai for o filho da direita do avô, troca o filho da direita do avô para ser o filho da direita do pai
+        } else this.root = rightChild; // Se não existir, é porque o pai é o raiz, raiz agora é o filho da direita do pai
 
+        // Subárvore da esquerda do filho da direita do pai
         NodeRN middleSubtree = rightChild.leftChild;
 
-        rightChild.leftChild = parent;
-        parent.parent = rightChild;
-        parent.rightChild = middleSubtree;
+        rightChild.leftChild = parent; // O novo filho da esquerda do filho da direita do pai é o pai
+        parent.parent = rightChild; // O pai do pai é o filho da direita do pai
+        parent.rightChild = middleSubtree; // O filho da esquerda do pai é a subarvore filha da esquerda do filho da direita do pai
 
-        if (middleSubtree != null) middleSubtree.parent = parent;
+        if (middleSubtree != null) middleSubtree.parent = parent; // Se essa subárvore realmente existir, o pai dela é o pai
 
-        rightChild.parent = grandParent;
+        rightChild.parent = grandParent; // O pai do filho da direita do pai é o avô
 
-        return rightChild;
+        return rightChild; // Retorna o filho da direita do pai que agora é o raiz da subárvore
     }
 
+    // Método de rotação simples para a direita e retorna o raiz da subárvore (pai não vai ser mais o raiz e seu filho esquerdo que vai ser)
     public NodeRN simpleRightRotation(NodeRN parent, NodeRN leftChild) {
-        NodeRN grandParent = parent.parent;
+        NodeRN grandParent = parent.parent; // Resgata o avô
 
-        if (grandParent != null) {
-            if (parent == grandParent.leftChild) grandParent.leftChild = leftChild;
-            else grandParent.rightChild = leftChild;
-        } else this.root = leftChild;
+        if (grandParent != null) { // Se existir avô
+            if (parent == grandParent.leftChild) grandParent.leftChild = leftChild; // Se o pai for o filho da esquerda do avô, troca para o filho da esquerda do avô ser o filho da esquerda do pai
+            else grandParent.rightChild = leftChild; // Se o pai for o filho da direita do avõ, troca o filho da direita do avô para ser o filho da esquerda do pai
+        } else this.root = leftChild; // Se não existir, é porque o pai é o raiz, raiz agora é o filho da direita do pai
 
+        // Subárvore da direita do filho da esquerda do pai
         NodeRN middleSubtree = leftChild.rightChild;
 
-        leftChild.rightChild = parent;
-        parent.parent = leftChild;
-        parent.leftChild = middleSubtree;
+        leftChild.rightChild = parent; // O novo filho da direita do filho da esquerda do pai é o pai
+        parent.parent = leftChild; // O pai do pai é o filho da esquerda do pai
+        parent.leftChild = middleSubtree; // O filho da esquerda do pai é a subarvore do filha da direita do filho da esquerda do pai
 
-        if (middleSubtree != null) middleSubtree.parent = parent;
+        if (middleSubtree != null) middleSubtree.parent = parent; // Se essa subarvore realmente existir, o pai dela é o pai
 
-        leftChild.parent = grandParent;
+        leftChild.parent = grandParent; // O pai do filho da direita do pai é o avô
 
-        return leftChild;
+        return leftChild; // Retorna o filho da direita do pai que agora é o raiz da subárvore
     }
 
+    // Método de rotação dupla para a esquerda e retorna o raiz da subárvore (o pai não vai ser mais o raiz e seu neto da esquerda do filho da direita)
     public NodeRN doubleLeftRotation(NodeRN parent, NodeRN rightChild) {
-        this.simpleRightRotation(rightChild, rightChild.leftChild);
-        return this.simpleLeftRotation(parent, parent.rightChild);
+        this.simpleRightRotation(rightChild, rightChild.leftChild); // Raiz vai ser o filho da esquerda do filho da direita do pai
+        return this.simpleLeftRotation(parent, parent.rightChild); // Raiz vai ser o neto esquerdo do filho da direita do pai
     }
 
+    // Método de rotação dupla para a direita e retorna o raiz da subárvore (o pai não vai ser mais o raiz e seu neto da direita do filho da esquerda)
     public NodeRN doubleRightRotation(NodeRN parent, NodeRN leftChild) {
-        this.simpleLeftRotation(leftChild, leftChild.rightChild);
-        return this.simpleRightRotation(parent, parent.leftChild);
+        this.simpleLeftRotation(leftChild, leftChild.rightChild); // Raiz vai ser o filho da direita do filho da esquerda do pai
+        return this.simpleRightRotation(parent, parent.leftChild); // Raiz vai ser o neto direito do filho da esquerda do pai
     }
 
     // Operações de Arvore Rubro Negra

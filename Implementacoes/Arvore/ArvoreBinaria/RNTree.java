@@ -293,103 +293,107 @@ public class RNTree {
 
     // Operações de Arvore Rubro Negra
 
+    // Método para ajustar cores da árvore com base no nó inserido
     private void adjustTreeInsertion(NodeRN actual) {
         NodeRN parent = actual.parent;
-        if (parent == null || parent.isBlack) return;
+        if (parent == null || parent.isBlack) return; // Se o pai for preto, não tem o que ajustar, retorna
 
         NodeRN grandParent = parent.parent;
-        if (grandParent == null) return;
+        if (grandParent == null) return; // Se não tiver avô, o pai é o raiz, não tem o que ajustar, retorna
 
-        NodeRN uncle = (grandParent.leftChild == parent) ? grandParent.rightChild : grandParent.leftChild;
-        boolean uncleRed = (uncle != null && !uncle.isBlack);
+        NodeRN uncle = (grandParent.leftChild == parent) ? grandParent.rightChild : grandParent.leftChild; // Resgata o tio do nó inserido, seja o filho esquerdo ou direito do avô
 
-        if (uncleRed && grandParent.isBlack) {
-            parent.isBlack = true;
+        if (uncle != null && !uncle.isBlack) { // Se o tio for vermelho
+            parent.isBlack = true; // Ajusta cores da familia
             uncle.isBlack = true;
             grandParent.isBlack = false;
 
-            if (grandParent == this.root) grandParent.isBlack = true;
-            else this.adjustTreeInsertion(grandParent);
-            return;
-        }
-
-        if (!uncleRed && grandParent.isBlack) {
-            boolean parentLeft = (parent == grandParent.leftChild);
-            boolean actualLeft = (actual == parent.leftChild);
-
-            if (parentLeft && actualLeft) {
+            if (grandParent == this.root) grandParent.isBlack = true; // Se avô for raiz, troca pra preto e para (caso base)
+            else this.adjustTreeInsertion(grandParent); // Continua recursivamente ajustando a partir do avô
+        } else { // Se o tio for preto (rotações)
+            boolean parentLeft = (parent == grandParent.leftChild); // Se o pai é o filho da esquerda do avô
+            boolean actualLeft = (actual == parent.leftChild); // Se o atual é o filho da esquerda do pai
+    
+            if (parentLeft && actualLeft) { // Pai é o filho da esquerda do avô e atual é o filho da esquerda do pai (rotação simples para a direita)
                 this.simpleRightRotation(grandParent, parent);
-                parent.isBlack = true;
-            } else if (!parentLeft && !actualLeft) {
+                parent.isBlack = true; // Nó raiz da subarvore rotacionada fica preto
+            } else if (!parentLeft && !actualLeft) { // Pai é o filho da direita do avô e atual é o filho da direita do pai (rotação simples para a esquerda)
                 this.simpleLeftRotation(grandParent, parent);
-                parent.isBlack = true;
-            } else if (parentLeft && !actualLeft) {
+                parent.isBlack = true; // Nó raiz da subarvore rotacionada fica preto
+            } else if (parentLeft && !actualLeft) { // Pai é o filho da esquerda do avô e atual é o filho da direita do pai (rotação dupla para a direita)
                 this.doubleRightRotation(grandParent, parent);
-                actual.isBlack = true;
-            } else {
+                actual.isBlack = true; // Nó raiz da subarvore rotacionada fica preto
+            } else { // Pai é o filho da direita do avô e atual é o filho da esquerda do pai (rotação dupla para a esquerda)
                 this.doubleLeftRotation(grandParent, parent);
-                actual.isBlack = true;
+                actual.isBlack = true; // Nó raiz da subarvore rotacionada fica preto
             }
-
-            grandParent.isBlack = false;
-            return;
+    
+            grandParent.isBlack = false; // Antigo nó raiz da subarvore fica vermelho
         }
-
-        throw new RuntimeException("Estado inválido em adjustTree");
+        return;
     }
 
+    // Método para ajustar cores da árvore com base no nó que vai ser removido fisicamente
     public void adjustTreeRemotion(NodeRN actual) {
         NodeRN parent = actual.parent;
-        if (parent == null) return;
+        if (parent == null) return; // Se não tiver pai (é o raiz), não precisa ajeitar nada
 
-        NodeRN brother = getBrother(parent, actual);
-        NodeRN distantNephew = getDistantNephew(parent, brother);
-        NodeRN closeNephew = getCloseNephew(parent, brother);
+        NodeRN brother = getBrother(parent, actual); // Resgata irmão seja direito seja direito
+        NodeRN distantNephew = getDistantNephew(parent, brother); // Resgata o sobrinho da direita caso o tio seja da direita ou o sobrinho da esquerda caso o tio deja da esquerda
+        NodeRN closeNephew = getCloseNephew(parent, brother); // Resgata o sobrinho da esquerda caso o tio seja da direita ou o sobrinho da direita caso o tio seja da esquerda
 
-        if (brother != null && !brother.isBlack) {
+        if (brother != null && !brother.isBlack) { // Se o irmao for vermelho
             case1(parent, brother);
-            brother = getBrother(parent, actual);
-            distantNephew = getDistantNephew(parent, brother);
-            closeNephew = getCloseNephew(parent, brother);
-        }
+            brother = getBrother(parent, actual); // Resgata o novo irmão depois da rotação acontecida no caso 1
+            distantNephew = getDistantNephew(parent, brother); // Resgata o novo sobrinho longe
+            closeNephew = getCloseNephew(parent, brother); // Resgata o novo sobrinho perto
+        } 
 
-        if (distantNephew != null && !distantNephew.isBlack) {
+        // IRMAO É PRETO    
+        if (distantNephew != null && !distantNephew.isBlack) { // Se sobrinho longe for vermelho
             case4(parent, brother, distantNephew);
             return;
         }
 
-        if (closeNephew != null && !closeNephew.isBlack) {
+        // IRMAO PRETO E SOBRINHO LONGE PRETO
+        if (closeNephew != null && !closeNephew.isBlack) { // Se sobrinho perto for vermelho
             case3(brother, closeNephew);
-            brother = getBrother(parent, actual);
-            distantNephew = getDistantNephew(parent, brother);
+            brother = getBrother(parent, actual); // Resgata novo irmão depois da rotação acontecida no caso 3
+            distantNephew = getDistantNephew(parent, brother); // Resgata novo sobrinho distante depois da rotação acontecido no caso 3
             case4(parent, brother, distantNephew);
             return;
         }
 
-        if (!parent.isBlack) {
+        // IRMAO PRETO, SOBRINHO LONGE PRETO, SOBRINHO PERTO PRETO
+        if (!parent.isBlack) { // Se pai for vermelho
             case2b(parent, brother);
         } 
         
+        // TODO MUNDO PRETO
         else {
             case2a(brother);
             adjustTreeRemotion(parent);
         }
     }
 
+    // Método para pegar o irmão do filho com base no pai
     private NodeRN getBrother(NodeRN parent, NodeRN child) {
         return (child == parent.leftChild) ? parent.rightChild : parent.leftChild;
     }
 
+    // Método para pegar o sobrinho distante do filho com base no pai e no irmao
     private NodeRN getDistantNephew(NodeRN parent, NodeRN brother) {
         if (brother == null) return null;
         return (brother == parent.leftChild) ? brother.leftChild : brother.rightChild;
     }
 
+    // Método para pegar o sobrinho perto do filho com base no pai e no irmao
     private NodeRN getCloseNephew(NodeRN parent, NodeRN brother) {
         if (brother == null) return null;
         return (brother == parent.leftChild) ? brother.rightChild : brother.leftChild;
     }
 
+    // CASO 1 - Rotação simples, pai fica vermelho e irmao fica preto
     public void case1(NodeRN parent, NodeRN brother) {
         if (brother == parent.leftChild) this.simpleRightRotation(parent, brother);
         else this.simpleLeftRotation(parent, brother);
@@ -397,15 +401,18 @@ public class RNTree {
         brother.isBlack = true;
     }
 
+    // CASO 2a - irmao fica vermelho
     public void case2a(NodeRN brother) {
         brother.isBlack = false;
     }
 
+    // CASO 2b - pai fica preto, irmao fica vermelho
     public void case2b(NodeRN parent, NodeRN brother) {
         parent.isBlack = true;
         if (brother != null) brother.isBlack = false;
     }
 
+    // CASO 3 - rotação simples, irmao vermelho e sobrinho perto vermelho
     public void case3(NodeRN brother, NodeRN closeNephew) {
         if (closeNephew == brother.leftChild) this.simpleRightRotation(brother, closeNephew);
         else this.simpleLeftRotation(brother, closeNephew);
@@ -413,6 +420,7 @@ public class RNTree {
         closeNephew.isBlack = true;
     }
 
+    // CASO 4 - rotação simples, irmao da cor do pai, pai preto e sobrinho distante preto
     public void case4(NodeRN parent, NodeRN brother, NodeRN distantNephew) {
         if (brother == parent.leftChild) this.simpleRightRotation(parent, brother);
         else this.simpleLeftRotation(parent, brother);

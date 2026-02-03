@@ -38,46 +38,84 @@ public class Dijkstra {
 
         melhorG[inicio.getX()][inicio.getY()] = 0;
 
+        // System.out.println("INICIO -> (" + inicio.getX() + "," + inicio.getY() +
+        // ")");
+
         aberta.enqueue(inicio);
 
         while (!aberta.isEmpty()) {
             Vertice atual = aberta.dequeue();
 
-            if (fechada.contains(atual))
-                continue;
+            int xAtual = atual.getX();
+            int yAtual = atual.getY();
 
-            if (ehObjetivo(atual, objetivos))
+            // System.out.println("\nRETIRADO DA FILA -> (" + xAtual + "," + yAtual + ")"
+            // + " G=" + atual.getG()
+            // + " H=" + atual.getH()
+            // + " F=" + atual.getF());
+
+            // 🔥 Descarta nó velho
+            if (atual.getG() > melhorG[xAtual][yAtual]) {
+                // System.out.println(" DESCARTADO (existe caminho melhor já conhecido)");
+                continue;
+            }
+
+            if (fechada.contains(atual)) {
+                // System.out.println(" DESCARTADO (já estava na fechada)");
+                continue;
+            }
+
+            if (ehObjetivo(atual, objetivos)) {
+                // System.out.println("OBJETIVO ENCONTRADO!");
                 return reconstruirCaminho(atual);
+            }
 
             fechada.add(atual);
+            // System.out.println(" ADICIONADO NA FECHADA");
 
             for (Vertice vizinho : vizinhos(atual, mapa)) {
-
-                if (fechada.contains(vizinho))
-                    continue;
-
-                int custoMovimento = (vizinho.getX() == atual.getX() || vizinho.getY() == atual.getY())
-                        ? 10 // movimento reto (cima, baixo, esquerda, direita)
-                        : 14; // movimento diagonal
-
-                int novoG = atual.getG() + custoMovimento;
 
                 int x = vizinho.getX();
                 int y = vizinho.getY();
 
-                if (novoG >= melhorG[x][y])
+                if (fechada.contains(vizinho)) {
+                    // System.out.println(" Vizinho (" + x + "," + y + ") ignorado (já fechado)");
                     continue;
+                }
 
+                int custoMovimento = (vizinho.getX() == xAtual || vizinho.getY() == yAtual)
+                        ? 10
+                        : 14;
+
+                int novoG = atual.getG() + custoMovimento;
+
+                // System.out.println(" Analisando vizinho (" + x + "," + y + ")"
+                // + " | custoMov=" + custoMovimento
+                // + " | novoG=" + novoG
+                // + " | melhorG atual=" + melhorG[x][y]);
+
+                if (novoG >= melhorG[x][y]) {
+                    // System.out.println(" IGNORADO (não é melhor caminho)");
+                    continue;
+                }
+
+                // Caminho melhor encontrado
                 melhorG[x][y] = novoG;
 
                 vizinho.setPai(atual);
                 vizinho.setG(novoG);
                 vizinho.setF(novoG);
 
+                // System.out.println(" ATUALIZADO -> pai=(" + xAtual + "," + yAtual + ")"
+                // + " G=" + novoG
+                // + " H=" + vizinho.getH());
+
                 aberta.enqueue(vizinho);
+                // System.out.println(" INSERIDO NA FILA");
             }
         }
 
+        // System.out.println("FALHOU: nenhum caminho encontrado");
         return null;
     }
 

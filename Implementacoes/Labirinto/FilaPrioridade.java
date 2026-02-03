@@ -83,9 +83,19 @@ public class FilaPrioridade {
         }
     }
 
-    // Retorna true se o pai for MAIOR que o filho (heap mínimo)
     private boolean maior(int pai, int filho) {
-        return heap[pai].getF() > heap[filho].getF();
+
+        int fPai = heap[pai].getF();
+        int fFilho = heap[filho].getF();
+
+        // 1º critério → menor F
+        if (fPai > fFilho)
+            return true;
+        if (fPai < fFilho)
+            return false;
+
+        // 2º critério → menor H (desempate)
+        return heap[pai].getH() > heap[filho].getH();
     }
 
     private void swap(int a, int b) {

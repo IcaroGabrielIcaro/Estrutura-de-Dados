@@ -39,35 +39,60 @@ public class AEstrela {
 
         melhorG[inicio.getX()][inicio.getY()] = 0;
 
+        // System.out.println("INICIO -> (" + inicio.getX() + "," + inicio.getY() +
+        // ") G=" + inicio.getG() +
+        // " H=" + inicio.getH() +
+        // " F=" + inicio.getF());
+
         aberta.enqueue(inicio);
 
         while (!aberta.isEmpty()) {
             Vertice atual = aberta.dequeue();
 
-            if (fechada.contains(atual))
-                continue;
+            // System.out.println("\nRETIRADO DA FILA -> (" + atual.getX() + "," +
+            // atual.getY() +
+            // ") G=" + atual.getG() +
+            // " H=" + atual.getH() +
+            // " F=" + atual.getF());
 
-            if (ehObjetivo(atual, objetivos))
+            if (fechada.contains(atual)) {
+                // System.out.println(" DESCARTADO (já estava na fechada)");
+                continue;
+            }
+
+            if (ehObjetivo(atual, objetivos)) {
+                // System.out.println("🎯 OBJETIVO ENCONTRADO!");
                 return reconstruirCaminho(atual);
+            }
 
             fechada.add(atual);
+            // System.out.println(" ADICIONADO NA FECHADA");
 
             for (Vertice vizinho : vizinhos(atual, mapa)) {
-
-                if (fechada.contains(vizinho))
-                    continue;
-
-                int custoMovimento = (vizinho.getX() == atual.getX() || vizinho.getY() == atual.getY())
-                        ? 10 // movimento reto (cima, baixo, esquerda, direita)
-                        : 14; // movimento diagonal
-
-                int novoG = atual.getG() + custoMovimento;
 
                 int x = vizinho.getX();
                 int y = vizinho.getY();
 
-                if (novoG >= melhorG[x][y])
+                if (fechada.contains(vizinho)) {
+                    // System.out.println(" Vizinho (" + x + "," + y + ") ignorado (já fechado)");
                     continue;
+                }
+
+                int custoMovimento = (vizinho.getX() == atual.getX() || vizinho.getY() == atual.getY())
+                        ? 10
+                        : 14;
+
+                int novoG = atual.getG() + custoMovimento;
+
+                // System.out.println(" Analisando vizinho (" + x + "," + y + ")" +
+                // " | custoMov=" + custoMovimento +
+                // " | novoG=" + novoG +
+                // " | melhorG atual=" + melhorG[x][y]);
+
+                if (novoG >= melhorG[x][y]) {
+                    // System.out.println(" IGNORADO (não é melhor caminho)");
+                    continue;
+                }
 
                 melhorG[x][y] = novoG;
 
@@ -76,10 +101,18 @@ public class AEstrela {
                 vizinho.setH(calcularMenorHeuristica(vizinho, objetivos));
                 vizinho.calcularF();
 
+                // System.out.println(" ATUALIZADO -> pai=(" + atual.getX() + "," + atual.getY()
+                // + ")" +
+                // " G=" + vizinho.getG() +
+                // " H=" + vizinho.getH() +
+                // " F=" + vizinho.getF());
+
                 aberta.enqueue(vizinho);
+                // System.out.println(" INSERIDO NA FILA");
             }
         }
 
+        // System.out.println("❌ FALHOU: nenhum caminho encontrado");
         return null;
     }
 
@@ -95,7 +128,7 @@ public class AEstrela {
             int dx = Math.abs(v.getX() - obj.getX());
             int dy = Math.abs(v.getY() - obj.getY());
 
-            int h = 14 * Math.min(dx, dy) + 10 * Math.abs(dx - dy);
+            int h = 10 * (dx + dy);
 
             if (h < menor)
                 menor = h;
